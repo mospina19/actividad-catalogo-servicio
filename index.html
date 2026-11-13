@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadena de valor: ¿cómo lo hizo posible la VAF?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&family=Source+Serif+4:wght@500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand-white:#ffffff; --brand-black:#191916;
+  --secondary-01:#ffe41e; --secondary-02:#fff18b;
+  --neutro-90:#4d4d4c; --neutro-80:#616160; --neutro-70:#73726d; --neutro-60:#8a8984;
+  --neutro-50:#bab9b3; --neutro-40:#e0dfda; --neutro-30:#f5f5f2; --neutro-20:#fcfcfa;
+  --primarytext:#1f1f1c; --secondarytext:#535351; --disabledtext:#bab9b3;
+  --linktext:#2442b2; --success:#095d0d; --alert:#e58617; --error:#a9142f;
+  --primarybackground:#f7f6f0; --secondarybackground:#fcfcfa;
+  --dk-primarytext:#fcfcfa; --dk-secondarytext:#a4a4a4;
+  --font-sans:"Source Sans 3","Source Sans Pro",system-ui,sans-serif;
+  --font-serif:"Source Serif 4",Georgia,serif;
+  --s4:4px;--s8:8px;--s12:12px;--s16:16px;--s20:20px;--s24:24px;--s32:32px;--s40:40px;--s48:48px;--s56:56px;--s64:64px;--s80:80px;
+  --maxw:1280px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font-sans);font-size:16px;line-height:24px;color:var(--primarytext);background:var(--brand-white);-webkit-font-smoothing:antialiased}
+.ms{font-family:"Material Symbols Outlined";font-weight:normal;font-style:normal;font-size:20px;line-height:1;display:inline-block;vertical-align:middle;letter-spacing:normal;text-transform:none;white-space:nowrap;-webkit-font-feature-settings:"liga";font-feature-settings:"liga"}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--s48)}
+@media(max-width:767px){.wrap{padding:0 var(--s20)}}
+h1,h2,h3,h4{margin:0}
+p{margin:0}
+a{color:var(--linktext)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--brand-black);outline-offset:2px}
+
+/* Navbar (ID Uniandes · type primary · color dark) */
+.navbar{background:var(--brand-black);color:var(--neutro-20);position:sticky;top:0;z-index:20;border-bottom:1px solid var(--neutro-90)}
+.navbar > .wrap{display:flex;align-items:center;gap:var(--s24);height:80px}
+.nb-skip{position:absolute;left:0;top:0;right:0;height:80px;display:flex;align-items:center;justify-content:center;background:var(--brand-black);color:var(--neutro-20);border:1px solid var(--neutro-20);font-size:20px;line-height:24px;letter-spacing:.04em;text-decoration:none;transform:translateY(-200%);z-index:2}
+.nb-skip:focus{transform:none}
+.nb-brand{display:flex;align-items:center;gap:var(--s16);text-decoration:none;color:inherit;flex:0 0 auto}
+.nb-logo-svg{height:48px;width:auto;display:block}
+.nb-div{width:1px;height:40px;background:var(--neutro-80)}
+.nb-unit{font-size:14px;line-height:16px;font-weight:600;max-width:200px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@media(max-width:1279px){.navbar > .wrap{height:72px}}
+/* Stepper de momentos (ID Uniandes · symbol number · layout desktop) */
+.moments{background:var(--brand-black);border-top:1px solid var(--neutro-90)}
+/* Stepper · tema Dark Background */
+.moments.idu-stepper li+li::before{background:var(--neutro-80)}
+.moments.idu-stepper li.after-success::before{background:#79db7d}
+.moments.idu-stepper .sym{background:#4d4c4c;border-color:var(--neutro-80);color:#a4a4a4}
+.moments.idu-stepper .txt{color:#a4a4a4}
+.moments.idu-stepper .active .sym{background:#4d4c4c;border-color:var(--neutro-20);color:var(--neutro-20)}
+.moments.idu-stepper .active .txt{color:var(--neutro-20)}
+.moments.idu-stepper .success .sym{background:#79db7d;border-color:#79db7d;color:var(--primarytext)}
+.moments.idu-stepper .success .txt{color:var(--neutro-20)}
+.moments.idu-stepper a:hover .sym{box-shadow:0 0 0 4px var(--neutro-90)}
+.moments.idu-stepper a:focus-visible{outline-color:var(--neutro-20)}
+.moments .wrap{display:block;height:auto;padding-top:var(--s16);padding-bottom:var(--s16)}
+.idu-stepper ol{list-style:none;margin:0 auto;padding:0;display:flex;max-width:760px}
+.idu-stepper li{flex:1;position:relative;display:flex;justify-content:center;min-width:0}
+.idu-stepper li+li::before{content:"";position:absolute;top:17px;right:calc(50% + 18px);left:calc(-50% + 18px);height:2px;background:var(--neutro-40)}
+.idu-stepper li.after-success::before{background:var(--success)}
+.idu-stepper a{display:flex;flex-direction:column;align-items:center;gap:var(--s12);text-decoration:none;color:inherit;max-width:100%}
+.idu-stepper .sym{width:36px;height:36px;border-radius:50%;border:2px solid var(--neutro-40);background:var(--secondarybackground);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:16px;font-weight:600;color:var(--secondarytext)}
+.idu-stepper .txt{font-size:16px;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;color:var(--secondarytext)}
+.idu-stepper .active .sym{border-color:var(--brand-black);color:var(--primarytext)}
+.idu-stepper .active .txt{font-weight:700;color:var(--primarytext)}
+.idu-stepper .success .sym{background:var(--success);border-color:var(--success);color:var(--neutro-20)}
+.idu-stepper .success .txt{font-weight:700;color:var(--primarytext)}
+.idu-stepper a:hover .sym{box-shadow:0 0 0 4px var(--neutro-30)}
+.idu-stepper a:hover .txt{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:767px){.idu-stepper .txt{font-size:14px;line-height:18px;white-space:normal;text-align:center;padding:0 4px}}
+@media(max-width:767px){.navbar > .wrap{height:48px;gap:var(--s12)}.nb-logo-svg{height:32px}.nb-div{height:24px}.nb-unit{font-size:12px;line-height:14px;max-width:150px}.nb-btn .lbl{display:none}}
+
+/* Hero */
+.hero{background:var(--brand-black);color:var(--dk-primarytext);padding:var(--s56) 0 var(--s64);border-top:1px solid var(--neutro-90)}
+.eyebrow{font-size:12px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.hero .eyebrow{color:var(--dk-secondarytext);margin-bottom:var(--s16)}
+.hero h1{font-size:48px;line-height:56px;font-weight:300;letter-spacing:-.02em;max-width:900px}
+.hero p{font-size:20px;line-height:32px;max-width:780px;margin-top:var(--s20);color:var(--dk-primarytext)}
+.divider{width:130px;height:4px;background:var(--secondary-01);margin-top:var(--s32)}
+@media(max-width:767px){.hero h1{font-size:32px;line-height:40px}.hero p{font-size:16px;line-height:24px}}
+
+section.view{display:none}
+section.view.on{display:block}
+.band{padding:var(--s56) 0}
+.band.alt{background:var(--primarybackground)}
+.sec-title{font-size:40px;line-height:48px;font-weight:300;letter-spacing:-.01em}
+.ctx-title{margin-top:var(--s24);font-size:24px;line-height:28px;font-weight:500;display:flex;align-items:baseline;gap:12px}
+.ctx-title .n{font-family:var(--font-serif);font-size:32px;line-height:36px;font-weight:600}
+.sec-intro{font-size:20px;line-height:32px;margin-top:var(--s16);max-width:820px}
+@media(max-width:767px){.sec-title{font-size:24px;line-height:32px}.sec-intro{font-size:16px;line-height:24px}}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 20px;border-radius:0;font-size:16px;line-height:16px;font-weight:600;letter-spacing:.04em;cursor:pointer;border:1px solid var(--brand-black);background:transparent;color:var(--primarytext);text-decoration:none;white-space:nowrap}
+.btn.lg{height:52px;font-size:18px;line-height:20px;padding:0 24px}
+.btn.primary{background:var(--brand-black);color:var(--neutro-20)}
+.btn.primary:hover{background:var(--secondary-01);color:var(--primarytext);border-color:var(--secondary-01)}
+.btn.primary:focus-visible{background:var(--secondary-02);color:var(--primarytext)}
+.btn.secondary:hover{background:var(--neutro-50)}
+.btn.tertiary{border-color:transparent}
+.btn.tertiary:hover{background:var(--neutro-30)}
+.btn:disabled{cursor:not-allowed;background:var(--neutro-40);color:var(--neutro-70);border-color:var(--neutro-40)}
+.dark .btn.primary{background:var(--neutro-20);color:var(--primarytext);border-color:var(--neutro-20)}
+.dark .btn.primary:hover{background:var(--secondary-01);border-color:var(--secondary-01)}
+.dark .btn.secondary{border-color:var(--neutro-20);color:var(--neutro-20)}
+.dark .btn.secondary:hover{background:var(--neutro-90)}
+
+/* Tags/chips */
+.tag{display:inline-block;font-size:10px;line-height:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border:1px solid var(--brand-black)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:14px;line-height:20px;padding:4px 12px;border-radius:999px;border:1px solid var(--neutro-50);background:var(--brand-white);cursor:pointer;color:var(--primarytext)}
+.chip[aria-pressed="true"]{background:var(--neutro-90);color:var(--neutro-20);border-color:var(--neutro-90)}
+.chip .ms{font-size:16px}
+
+/* Example */
+.ex-grid{display:grid;grid-template-columns:5fr 7fr;gap:var(--s32)}
+@media(max-width:1023px){.ex-grid{grid-template-columns:1fr}}
+.zone-title{display:flex;align-items:baseline;gap:12px;margin-bottom:var(--s16);padding-bottom:var(--s12);border-bottom:1px solid var(--brand-black)}
+.zone-title h3{font-size:24px;line-height:28px;font-weight:500}
+.zone-title span{font-size:14px;color:var(--secondarytext)}
+.how{display:grid;grid-template-columns:1fr;gap:var(--s24)}
+.how .step{display:grid;grid-template-columns:minmax(180px,2fr) 3fr;column-gap:var(--s32);align-items:start}
+.how .step .head{grid-column:1}
+.how .step .ans{grid-column:2;grid-row:1;margin-top:0;padding-top:0;border-top:0;padding-left:var(--s32);border-left:1px solid var(--neutro-40)}
+@media(max-width:767px){.how .step{grid-template-columns:1fr}.how .step .ans{grid-column:1;grid-row:auto;margin-top:var(--s16);padding:var(--s16) 0 0;border-left:0;border-top:1px solid var(--neutro-40)}}
+.step{background:var(--brand-white);border:1px solid var(--neutro-40);padding:var(--s24);transition:opacity .25s, box-shadow .25s;position:relative;margin-bottom:var(--s16)}
+.how .step{margin-bottom:0}
+.mframe{margin:calc(-1 * var(--s24)) calc(-1 * var(--s24)) var(--s24);position:relative;background:var(--neutro-40)}
+.mframe.solo{margin:0 0 var(--s16)}
+.mframe img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.mframe figcaption{position:absolute;left:0;bottom:0;background:rgba(25,25,22,.72);color:var(--neutro-20);font-size:12px;line-height:16px;padding:4px 8px}
+.step ul.icolist{list-style:none;padding:0;margin:0}
+.icolist li{display:grid;grid-template-columns:24px 1fr;gap:var(--s12);align-items:start;margin-bottom:var(--s12)}
+.icolist .ms{font-size:24px;line-height:24px}
+.iconrow{display:grid;grid-template-columns:24px 1fr;gap:var(--s12);align-items:start}
+.iconrow+.iconrow{margin-top:var(--s12)}
+.iconrow .ms{font-size:24px;line-height:24px}
+.step .num{font-family:var(--font-serif);font-size:32px;line-height:36px;font-weight:600;color:var(--primarytext)}
+.step h4{font-size:18px;line-height:24px;font-weight:600;margin-top:var(--s8)}
+.step .q{font-size:14px;line-height:20px;color:var(--secondarytext);margin-top:var(--s4)}
+.step .ans{margin-top:var(--s16);padding-top:var(--s16);border-top:1px solid var(--neutro-40)}
+.step .ans p{font-size:16px;line-height:24px}
+.step ol,.step ul{margin:var(--s8) 0 0;padding-left:20px}
+.step li{margin-bottom:6px}
+.note{font-size:12px;line-height:16px;color:var(--secondarytext);font-style:italic}
+.step.cur{box-shadow:inset 0 4px 0 var(--secondary-01);border-color:var(--brand-black)}
+.presenting .step.future{opacity:.38}
+.presenting .step.future .ans{display:none}
+.presenting .step.future::after{content:"Se revela en el paso " attr(data-n);display:block;margin-top:var(--s12);font-size:12px;color:var(--secondarytext)}
+.scen{list-style:none;padding:0 !important;margin-top:var(--s8)}
+.scen li{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;margin:0 0 4px;font-size:14px;line-height:20px;border-left:4px solid transparent}
+.scen li .ms{font-size:18px;color:var(--neutro-60)}
+.scen li.hit{background:var(--secondary-02);border-left-color:var(--brand-black);font-weight:600}
+.scen li.hit .ms{color:var(--primarytext)}
+table{width:100%;border-collapse:collapse;font-size:15px;line-height:22px}
+th{text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--secondarytext);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--brand-black)}
+td{padding:10px 12px;border-bottom:1px solid var(--neutro-40);vertical-align:top}
+.next-cta{margin-top:var(--s40);display:flex;gap:var(--s16);align-items:center;flex-wrap:wrap;background:var(--brand-black);color:var(--neutro-20);padding:var(--s32)}
+.next-cta h3{font-size:32px;line-height:36px;font-weight:600;margin-right:auto}
+@media(max-width:767px){.next-cta h3{font-size:24px;line-height:28px}}
+
+/* Tarea */
+.brief{display:grid;grid-template-columns:7fr 5fr;gap:var(--s48);align-items:start}
+@media(max-width:1023px){.brief{grid-template-columns:1fr;gap:var(--s32)}}
+.quote{font-family:var(--font-serif);font-size:24px;line-height:32px;font-weight:500;border-left:4px solid var(--neutro-50);padding-left:var(--s24);margin-top:var(--s24)}
+.howto{list-style:none;padding:0;margin:var(--s32) 0 0;counter-reset:h}
+.howto li{counter-increment:h;display:grid;grid-template-columns:48px 1fr;gap:var(--s16);padding:var(--s16) 0;border-top:1px solid var(--neutro-40)}
+.howto li::before{content:counter(h);font-family:var(--font-serif);font-size:32px;line-height:36px;font-weight:600}
+.howto b{display:block;font-size:18px;line-height:24px}
+.howto span{color:var(--secondarytext)}
+.qa{background:var(--secondary-01);padding:var(--s32)}
+.qa h3{font-size:24px;line-height:28px;font-weight:500;margin-bottom:var(--s16)}
+.qa ol{margin:0;padding:0;list-style:none}
+.qa li{display:grid;grid-template-columns:40px 1fr;padding:10px 0;border-top:1px solid rgba(25,25,22,.25);font-size:15px;line-height:22px}
+.qa li b{font-family:var(--font-serif);font-weight:600}
+.qa .grp{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin:var(--s16) 0 4px}
+
+/* Wizard */
+.wiz{scroll-margin-top:80px;margin-top:var(--s48);background:var(--brand-white);border:1px solid var(--brand-black)}
+.wiz-head{display:flex;align-items:center;gap:var(--s16);padding:var(--s16) var(--s24);border-bottom:1px solid var(--neutro-40);flex-wrap:wrap}
+.wiz-head h3{font-size:24px;line-height:28px;font-weight:500;margin-right:auto}
+.status{font-size:14px;line-height:20px;display:flex;align-items:center;gap:6px;color:var(--secondarytext)}
+.status.ok{color:var(--success)}
+.status.err{color:var(--error)}
+.stepper{display:flex;overflow-x:auto;border-bottom:1px solid var(--neutro-40)}
+.stepper button{flex:1 0 auto;min-width:92px;background:none;border:0;border-bottom:4px solid transparent;padding:14px 12px 10px;cursor:pointer;text-align:left;color:var(--secondarytext)}
+.stepper button .n{display:block;font-family:var(--font-serif);font-weight:600;font-size:18px;line-height:20px}
+.stepper button .t{display:block;font-size:12px;line-height:16px;letter-spacing:.04em;margin-top:2px}
+.stepper button.filled .n::after{content:" ✓";font-family:var(--font-sans);font-size:14px;color:var(--success)}
+.stepper button[aria-current="step"]{color:var(--primarytext);border-bottom-color:var(--brand-black);background:var(--neutro-30)}
+.stepper button:hover{background:var(--neutro-30)}
+.wiz-body{padding:var(--s32) var(--s24);display:grid;grid-template-columns:8fr 4fr;gap:var(--s32)}
+@media(max-width:1023px){.wiz-body{grid-template-columns:1fr}}
+.wiz-body h4{font-size:32px;line-height:36px;font-weight:600}
+.wiz-body h4 .n{font-family:var(--font-serif);margin-right:10px}
+.wiz-body .q{font-size:18px;line-height:28px;color:var(--secondarytext);margin:var(--s8) 0 var(--s24)}
+.hint{background:var(--primarybackground);padding:var(--s20);font-size:14px;line-height:20px;align-self:start;border-left:4px solid var(--neutro-50)}
+.hint .eyebrow{color:var(--secondarytext);margin-bottom:var(--s8);display:flex;gap:6px;align-items:center}
+.hint ul{margin:6px 0 0;padding-left:18px}
+label.f{display:block;font-size:14px;line-height:20px;font-weight:600;margin:0 0 6px}
+.field{margin-bottom:var(--s20)}
+input[type=text],textarea{width:100%;font:inherit;font-size:16px;line-height:24px;color:var(--primarytext);background:var(--primarybackground);border:0;border-bottom:1px solid var(--brand-black);border-radius:0;padding:10px 12px}
+textarea{min-height:120px;resize:vertical}
+input[type=text]:focus,textarea:focus{outline:none;border-bottom:2px solid var(--brand-black);background:var(--neutro-30)}
+.help{font-size:12px;line-height:16px;color:var(--secondarytext);margin-top:4px}
+.rows{display:flex;flex-direction:column;gap:var(--s12)}
+.row{display:grid;grid-template-columns:32px 1fr 1fr 40px;gap:var(--s12);align-items:start}
+.row.one{grid-template-columns:32px 1fr 40px}
+.row .idx{font-family:var(--font-serif);font-weight:600;padding-top:10px}
+.iconbtn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:none;border:1px solid transparent;cursor:pointer;color:var(--primarytext)}
+.iconbtn:hover{background:var(--neutro-30)}
+.iconbtn:disabled{color:var(--disabledtext);cursor:default;background:none}
+@media(max-width:767px){.row{grid-template-columns:24px 1fr 40px}.row .b{grid-column:2}.row .del{grid-row:1;grid-column:3}}
+.svc{border:1px solid var(--neutro-40);padding:var(--s16);display:grid;gap:var(--s12)}
+.svc-top{display:flex;gap:var(--s12);align-items:center}
+.svc-top .idx{font-family:var(--font-serif);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.rank{list-style:none;margin:0;padding:0}
+.rank li{display:grid;grid-template-columns:40px 1fr auto;gap:var(--s12);align-items:center;padding:8px 8px 8px 12px;border:1px solid var(--neutro-40);margin-bottom:6px;background:var(--brand-white)}
+.rank li .pos{font-family:var(--font-serif);font-weight:600;font-size:20px}
+.rank li:first-child{border-color:var(--brand-black);box-shadow:inset 4px 0 0 var(--secondary-01)}
+.rank li .txt{font-size:15px;line-height:22px}
+/* Card sorting */
+.sort{display:grid;grid-template-columns:1fr;gap:var(--s16)}
+.sort .zone{border:1px dashed var(--neutro-50);background:var(--primarybackground);padding:var(--s12);min-height:120px;display:flex;flex-direction:column;gap:8px;transition:background .15s,border-color .15s}
+.sort .zone.pool{grid-column:1/-1;background:var(--neutro-20)}
+.sort .zone.ranked{border:1px solid var(--brand-black);background:var(--brand-white)}
+.sort .zone.over{background:var(--secondary-02);border-color:var(--brand-black)}
+.sort .zh{display:flex;align-items:center;gap:8px;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--secondarytext)}
+.sort .zh .ms{font-size:18px}
+.sort .zh .ct{margin-left:auto;font-weight:400;letter-spacing:0;text-transform:none}
+.sort .zempty{font-size:14px;line-height:20px;color:var(--secondarytext);padding:12px 4px}
+.scard{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--brand-white);border:1px solid var(--neutro-40);padding:8px 6px 8px 8px;cursor:grab;user-select:none;touch-action:none}
+.scard:hover{border-color:var(--brand-black)}
+.scard.dragging{opacity:.4}
+.scard .grip{color:var(--neutro-60);font-size:20px}
+.scard .pos{font-family:var(--font-serif);font-weight:600;font-size:20px;min-width:20px;text-align:center}
+.scard .txt{font-size:15px;line-height:20px}
+.scard .acts{display:flex;gap:0}
+.scard .iconbtn{width:32px;height:32px}
+.scard .iconbtn .ms{font-size:18px}
+.ranked .zh+.scard{border-color:var(--brand-black);box-shadow:inset 4px 0 0 var(--secondary-01)}
+.zone.out .scard{background:transparent;border-style:dashed;cursor:grab}
+.scard.off .grip{color:var(--neutro-60)}
+.btn.sm{height:32px;padding:0 10px;font-size:14px;letter-spacing:.02em}
+.btn.sm .ms{font-size:16px}
+.scard .pos{font-family:var(--font-serif);font-weight:600;font-size:20px;min-width:20px;text-align:center}
+.scard{grid-template-columns:auto auto 1fr auto}
+.scard.off{grid-template-columns:auto 1fr auto}
+.zone.out .scard .txt{color:var(--secondarytext);text-decoration:line-through}
+.drop-mark{height:3px;background:var(--brand-black);margin:-2px 0}
+.ghost{position:fixed;pointer-events:none;z-index:100;opacity:.9;box-shadow:0 8px 24px rgba(25,25,22,.25);background:var(--brand-white);border:1px solid var(--brand-black);padding:8px 12px;font-size:15px;line-height:20px;max-width:360px}
+@media(max-width:767px){.sort{grid-template-columns:1fr}}
+.out-list{margin:8px 0 0;padding:0;list-style:none;font-size:14px;line-height:20px;color:var(--secondarytext)}
+.out-list li{text-decoration:line-through}
+.wiz-foot{display:flex;justify-content:space-between;gap:var(--s12);padding:var(--s16) var(--s24);border-top:1px solid var(--neutro-40);flex-wrap:wrap}
+.banner-warn{display:flex;gap:10px;align-items:flex-start;padding:var(--s12) var(--s16);border-left:4px solid var(--alert);background:var(--neutro-30);font-size:14px;line-height:20px;margin-top:var(--s16)}
+.banner-warn .ms{color:var(--alert)}
+
+/* Guía paso a paso (Momento 2) */
+.guide{max-width:760px;margin:0 auto;background:var(--brand-white);border:1px solid var(--neutro-40);scroll-margin-top:200px}
+.g-top{padding:var(--s20) var(--s32) 0}
+.g-top .row1{display:flex;align-items:center;gap:var(--s12);min-height:40px}
+.g-back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:8px 8px 8px 0;font:inherit;font-size:16px;letter-spacing:.04em;color:var(--primarytext);cursor:pointer}
+.g-back:hover .t{text-decoration:underline;text-underline-offset:4px}
+.g-count{margin-left:auto;font-size:14px;line-height:20px;color:var(--secondarytext)}
+.g-bar{height:4px;background:var(--neutro-40);margin-top:var(--s12)}
+.g-bar i{display:block;height:100%;background:var(--brand-black);transition:width .3s}
+.g-body{padding:var(--s40) var(--s32) var(--s24)}
+.g-crumb{display:flex;align-items:center;gap:8px;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--secondarytext);margin-bottom:var(--s12)}
+.g-crumb .ms{font-size:16px}
+.g-crumb .num{font-family:var(--font-serif);font-size:16px;letter-spacing:0;color:var(--primarytext)}
+.g-q{font-size:32px;line-height:40px;font-weight:600;letter-spacing:-.01em}
+.g-help{font-size:18px;line-height:28px;color:var(--secondarytext);margin-top:var(--s8)}
+.g-field{margin-top:var(--s32)}
+.g-field input[type=text]{font-size:20px;line-height:32px;padding:12px 14px}
+.g-field textarea{font-size:18px;line-height:28px;min-height:160px}
+.g-ex{margin-top:var(--s32);border-left:4px solid var(--neutro-50);background:var(--primarybackground)}
+.g-ex summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:12px 16px;font-size:14px;line-height:20px;font-weight:600}
+.g-ex summary::-webkit-details-marker{display:none}
+.g-ex summary .ms{font-size:18px}
+.g-ex[open] summary .chev{transform:rotate(180deg)}
+.g-ex .exb{padding:0 16px 16px;font-size:14px;line-height:20px}
+.g-ex ul{margin:6px 0 0;padding-left:18px}
+.g-foot{display:flex;align-items:center;gap:var(--s12);padding:var(--s20) var(--s32) var(--s32);flex-wrap:wrap}
+.g-foot .btn.primary{margin-left:auto}
+.g-foot .tip{font-size:13px;line-height:18px;color:var(--secondarytext)}
+.g-meta{max-width:760px;margin:var(--s12) auto 0;display:flex;justify-content:flex-end;min-height:20px}
+.g-intro .quote{margin-top:var(--s24)}
+.g-map{list-style:none;margin:var(--s32) 0 0;padding:0;display:grid;gap:0}
+.g-map li{display:grid;grid-template-columns:40px 1fr;gap:var(--s12);padding:var(--s12) 0;border-top:1px solid var(--neutro-40);align-items:start}
+.g-map li .ms{font-size:24px;line-height:28px}
+.g-map b{display:block;font-size:18px;line-height:24px}
+.g-map span.t{color:var(--secondarytext);font-size:15px;line-height:22px}
+.g-resume{margin-top:var(--s24);padding:var(--s16);background:var(--primarybackground);display:flex;align-items:center;gap:var(--s12);flex-wrap:wrap}
+.g-resume .ms{font-size:24px}
+.g-done{display:flex;align-items:center;gap:12px;color:var(--success);font-weight:700;margin-bottom:var(--s16)}
+.g-done .ms{font-size:28px}
+@media(max-width:767px){.g-top,.g-body,.g-foot{padding-left:var(--s20);padding-right:var(--s20)}.g-q{font-size:24px;line-height:32px}.g-help{font-size:16px;line-height:24px}.g-foot .btn.primary{width:100%;margin-left:0}}
+
+.guide .ficha{grid-template-columns:1fr;gap:0}
+.drop{display:flex;align-items:center;gap:var(--s16);margin-top:var(--s32);padding:var(--s24);border:2px dashed var(--neutro-50);background:var(--brand-white);cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--brand-black);background:var(--secondary-02)}
+.drop>.ms{font-size:40px}
+.drop:focus-within{outline:2px solid var(--brand-black);outline-offset:2px}
+.loaded{display:flex;align-items:center;justify-content:space-between;gap:var(--s12);margin-top:var(--s16);font-size:14px;color:var(--secondarytext)}
+.ulist{margin:6px 0 0;padding-left:20px}
+.svc2{border:1px solid var(--neutro-40);padding:var(--s20) var(--s20) var(--s8);margin:0;position:relative;min-width:0}
+.svc2 legend{padding:0 8px;margin-left:-8px;color:var(--secondarytext)}
+.svc2 .svc-del{position:absolute;top:-17px;right:12px;background:var(--brand-white)}
+.svc2 .f{font-size:15px;font-weight:600}
+.checks{display:grid;gap:4px;margin-bottom:var(--s16)}
+.chk{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border:1px solid var(--neutro-40);cursor:pointer;font-size:16px;line-height:24px}
+.chk:hover{background:var(--neutro-30)}
+.chk input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--brand-black);flex:0 0 auto}
+.chk:has(input:checked){border-color:var(--brand-black);background:var(--neutro-20)}
+.g-actions{display:flex;gap:var(--s8);flex-wrap:wrap;align-items:center;width:100%}
+.g-actions .btn{padding:0 14px}
+.g-actions .g-new{padding:0 10px}
+.g-foot{container-type:inline-size}
+@container (max-width:690px){.g-actions .btn .ms{display:none}}
+.g-foot .g-actions .btn.primary{margin-left:0}
+.g-foot .g-new{margin-left:auto}
+@media(max-width:767px){.g-actions{width:100%;flex-direction:column}.g-actions .btn{width:100%}.g-foot .g-new{margin-left:0;width:100%}}
+/* Ficha */
+.ficha{display:grid;grid-template-columns:5fr 7fr;gap:var(--s32)}
+@media(max-width:1023px){.ficha{grid-template-columns:1fr}}
+.ficha .blk{padding:var(--s16) 0;border-top:1px solid var(--neutro-40)}
+.ficha .blk .lab{font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--secondarytext);margin-bottom:6px}
+.ficha .blk .lab b{font-family:var(--font-serif);font-size:16px;color:var(--primarytext);margin-right:6px;letter-spacing:0}
+.ficha .pre{white-space:pre-wrap}
+.ficha .empty{color:var(--disabledtext)}
+.ficha table td:first-child{width:50%}
+.svc-list{display:grid;gap:var(--s12)}
+.svc-card{border-left:4px solid var(--brand-black);background:var(--primarybackground);padding:var(--s12) var(--s16)}
+.svc-card b{font-size:18px}
+.svc-card .why{color:var(--secondarytext);font-size:14px;line-height:20px;margin-top:2px}
+.svc-card .chips{margin-top:8px}
+.svc-card .chip{cursor:default;font-size:12px;line-height:16px;padding:2px 10px}
+
+/* Casos */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--s16);margin-top:var(--s32)}
+.ccard{background:var(--brand-white);border:1px solid var(--neutro-40);padding:var(--s24);cursor:pointer;text-align:left;font:inherit;color:inherit;display:flex;flex-direction:column;gap:8px;min-height:180px}
+.ccard:hover{border-color:var(--brand-black);background:var(--neutro-20)}
+.ccard .g{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--secondarytext);font-weight:600}
+.ccard h4{font-family:var(--font-serif);font-size:20px;line-height:24px;font-weight:500}
+.ccard .meta{margin-top:auto;font-size:13px;color:var(--secondarytext);display:flex;justify-content:space-between;align-items:center}
+.prog{height:4px;background:var(--neutro-40);margin-top:4px}
+.prog i{display:block;height:100%;background:var(--brand-black)}
+.agg{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s32);margin-top:var(--s32)}
+@media(max-width:1023px){.agg{grid-template-columns:1fr}}
+.agg h4{font-size:20px;line-height:24px;font-weight:500;margin-bottom:var(--s12);padding-bottom:8px;border-bottom:1px solid var(--brand-black)}
+.bar{display:grid;grid-template-columns:1fr 32px;gap:8px;align-items:center;margin-bottom:10px;font-size:14px;line-height:18px}
+.bar .tr{grid-column:1/-1;height:8px;background:var(--neutro-40)}
+.bar .tr i{display:block;height:100%;background:var(--brand-black)}
+.bar .v{text-align:right;font-weight:700}
+.freq{list-style:none;padding:0;margin:0}
+.freq li{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--neutro-40);font-size:14px}
+.freq li b{font-weight:700}
+.emptystate{padding:var(--s48) var(--s24);text-align:center;border:1px dashed var(--neutro-50);margin-top:var(--s32);color:var(--secondarytext)}
+.emptystate .ms{font-size:40px;display:block;margin-bottom:8px;color:var(--neutro-60)}
+
+/* Dialog */
+.overlay{position:fixed;inset:0;background:rgba(25,25,22,.6);z-index:50;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:var(--s40) var(--s16)}
+.overlay.on{display:flex}
+.dlg{background:var(--brand-white);max-width:1120px;width:100%}
+.dlg-head{display:flex;gap:var(--s16);align-items:flex-start;padding:var(--s24);border-bottom:1px solid var(--brand-black)}
+.dlg-head .tt{margin-right:auto}
+.dlg-head h3{font-family:var(--font-serif);font-size:32px;line-height:36px;font-weight:600}
+.dlg-body{padding:var(--s24)}
+.confirm{display:none;gap:8px;align-items:center;font-size:14px}
+.confirm.on{display:flex}
+
+footer{background:var(--brand-black);color:var(--dk-secondarytext);font-size:14px;line-height:20px;padding:var(--s32) 0}
+footer b{color:var(--dk-primarytext)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+
+<header class="navbar dark" id="navbar">
+  <a class="nb-skip" href="#main">Saltar al contenido principal</a>
+  <div class="wrap">
+    <a class="nb-brand" href="#ejemplo" aria-label="Universidad de los Andes · Vicerrectoría Administrativa y Financiera"><svg width="121" height="48" class="nb-logo-svg" viewBox="0 0 121 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+<path d="M32.9836 36.6065C27.4787 40.1906 21.7571 39.9982 21.7571 39.9982C21.7571 39.9982 21.5958 39.2642 21.6613 38.0037C21.7268 36.7381 22.4124 37.0975 22.9065 36.1003C23.0879 35.7358 23.2442 35.4878 23.5215 34.6373C23.5316 34.6019 23.1938 28.5475 23.1031 25.9809C23.0577 24.599 22.7956 22.2906 22.4931 20.043C22.3167 18.7116 21.9134 17.6587 21.7268 16.3931C21.4546 14.5657 21.1421 12.5104 21.1421 12.5104C20.9203 13.0926 20.5976 15.2643 20.275 17.7194C20.1187 18.8939 19.9675 20.1392 19.8213 21.2984C19.5138 23.7586 18.7526 30.3344 18.6316 30.6939C18.4602 31.2355 18.4401 30.5471 18.4401 30.5471C18.4401 30.5471 18.8938 23.6473 19.0299 20.6201C19.0954 19.1419 19.2063 17.5119 19.3878 15.9527C19.5289 14.7834 19.7054 13.6494 19.9373 12.642C19.9373 12.642 20.7237 10.2527 20.9757 10.2071C21.2278 10.1616 22.1301 11.7106 22.4427 13.0926C23.1383 16.2109 23.5467 16.6108 24.076 19.8861C24.5801 22.9993 25.0388 25.6013 25.1044 26.0265C25.3262 27.5705 25.2153 32.3897 24.8271 34.3083C24.7364 34.8297 24.7061 35.022 24.3684 35.3713C23.5668 36.1813 23.0022 37.1482 23.0022 37.7809C23.0022 38.4137 22.8964 38.3985 23.0426 38.7681C23.0426 38.7681 24.0962 40.3475 30.1454 36.728C30.1454 36.728 32.0409 35.7308 32.0409 33.5388V11.336C32.0409 11.336 26.042 9.29592 21.4193 9.29592C16.7967 9.29592 11.0196 11.3309 11.0196 11.3309V33.4376C11.0196 34.7942 11.2162 37.3507 13.152 38.2214C13.152 38.2214 8 36.4496 8 33.4123V9.45285C8 9.45285 15.8641 8 21.4294 8C26.9948 8 35 9.45285 35 9.45285V33.4376C35 35.503 32.9785 36.6015 32.9785 36.6015L32.9836 36.6065Z" fill="#FCFCFA"></path>
+<path d="M106.261 17.8007C105.723 18.1019 105.002 18.25 104.088 18.25C103.175 18.25 102.464 17.9735 101.956 17.4156C101.447 16.8627 101.19 16.0875 101.19 15.0903C101.19 14.093 101.447 13.2932 101.956 12.6958C102.444 12.1231 103.106 11.8417 103.921 11.8417C104.281 11.8417 104.592 11.8812 104.859 11.9602V9.45215H106.266V17.8007H106.261ZM104.854 12.7254C104.666 12.6711 104.459 12.6464 104.227 12.6464C103.131 12.6464 102.583 13.4364 102.583 15.0162C102.583 16.5961 103.096 17.3514 104.123 17.3514C104.459 17.3514 104.706 17.307 104.854 17.2132V12.7254Z" fill="#FCFCFA"></path>
+<path d="M112.687 14.9812L108.876 15.5342C108.99 16.6894 109.557 17.2671 110.574 17.2671C111.177 17.2671 111.7 17.1535 112.149 16.9264L112.485 17.8151C111.952 18.1064 111.266 18.2545 110.426 18.2545C109.533 18.2545 108.827 17.9731 108.308 17.4102C107.795 16.8474 107.533 16.0476 107.533 15.0108C107.533 13.9741 107.77 13.2138 108.244 12.6509C108.718 12.0832 109.365 11.8018 110.189 11.8018C111.014 11.8018 111.656 12.0733 112.085 12.6164C112.52 13.1594 112.717 13.9494 112.687 14.9862V14.9812ZM111.374 14.4283C111.374 13.2483 110.96 12.6608 110.145 12.6608C109.71 12.6608 109.38 12.8336 109.153 13.1792C108.896 13.5544 108.777 14.1024 108.792 14.8183L111.374 14.4233V14.4283Z" fill="#FCFCFA"></path>
+<path d="M41.8124 34.7493H39.6006V21.0835H41.8124V34.7493Z" fill="#FCFCFA"></path>
+<path d="M52.012 29.8765C52.012 31.3872 51.6763 32.5869 51.0147 33.4805C50.289 34.4482 49.272 34.9271 47.9538 34.9271C46.6356 34.9271 45.6185 34.4432 44.8928 33.4805C44.2312 32.5869 43.8955 31.3872 43.8955 29.8765C43.8955 28.3657 44.2263 27.1512 44.8928 26.2576C45.6185 25.2949 46.6356 24.811 47.9538 24.811C49.272 24.811 50.3038 25.2949 51.0147 26.2576C51.6763 27.1512 52.012 28.3558 52.012 29.8765ZM49.82 29.8567C49.82 27.4178 49.1979 26.1983 47.9538 26.1983C46.7096 26.1983 46.0925 27.4178 46.0925 29.8567C46.0925 32.2956 46.7096 33.4262 47.9538 33.4262C49.1979 33.4262 49.82 32.2364 49.82 29.8567Z" fill="#FCFCFA"></path>
+<path d="M59.5894 31.9398C59.5894 32.7593 59.2685 33.4604 58.6267 34.038C57.9848 34.6156 57.1456 34.9069 56.1088 34.9069C54.9979 34.9069 54.0945 34.6749 53.4082 34.2009L53.9908 32.7889C54.4598 33.1641 55.072 33.3518 55.8224 33.3518C56.2668 33.3518 56.6321 33.2234 56.9086 32.9617C57.185 32.7001 57.3233 32.3742 57.3233 31.9743C57.3233 31.5744 57.2147 31.2436 56.9974 31.0067C56.7802 30.7697 56.4149 30.5574 55.8915 30.3648C54.4055 29.7971 53.6649 28.8837 53.6649 27.6297C53.6649 26.8299 53.9513 26.1585 54.524 25.6154C55.0967 25.0723 55.8422 24.8008 56.7605 24.8008C57.7479 24.8008 58.597 25.0279 59.2932 25.492L58.7501 26.7756C58.3058 26.4152 57.7874 26.2325 57.1949 26.2325C56.7605 26.2325 56.4198 26.356 56.173 26.6028C55.9261 26.8497 55.8027 27.1558 55.8027 27.5162C55.8027 28.158 56.2865 28.6714 57.2492 29.0565C58.8044 29.6835 59.5845 30.6463 59.5845 31.9348L59.5894 31.9398Z" fill="#FCFCFA"></path>
+<path d="M75.8918 34.7489H73.3147L72.2729 31.2683H67.9037L66.8224 34.7489H64.5761L69.0639 21.2017H71.4238L75.8918 34.7489ZM71.9125 29.8069L70.5154 25.0378C70.3179 24.3663 70.1994 23.8232 70.1599 23.4036H70.1204C70.0562 23.7591 69.9278 24.3021 69.7452 25.0378L68.2887 29.8069H71.9125Z" fill="#FCFCFA"></path>
+<path d="M84.982 34.7494H82.7702V27.8276C82.7702 26.7415 82.1877 26.1984 81.0176 26.1984C80.4597 26.1984 79.9561 26.2922 79.497 26.4699V34.7494H77.2852V25.5122C78.2874 25.0431 79.5611 24.8062 81.1064 24.8062C82.4691 24.8062 83.4812 25.1073 84.1329 25.7096C84.7006 26.2181 84.982 26.9143 84.982 27.7931V34.7494Z" fill="#FCFCFA"></path>
+<path d="M94.9447 34.2209C94.1004 34.69 92.9649 34.9269 91.5381 34.9269C90.1113 34.9269 88.9807 34.4925 88.1858 33.6236C87.391 32.7546 86.9911 31.5401 86.9911 29.9849C86.9911 28.4298 87.391 27.1659 88.1858 26.2377C88.961 25.3441 89.9879 24.8998 91.2666 24.8998C91.8343 24.8998 92.3231 24.959 92.7329 25.0825V21.1328H94.9447V34.2259V34.2209ZM92.7329 33.2977V26.2723C92.4416 26.1884 92.1207 26.1439 91.7553 26.1439C90.0372 26.1439 89.1831 27.3831 89.1831 29.8566C89.1831 32.3301 89.9829 33.5149 91.5924 33.5149C92.1256 33.5149 92.5058 33.4458 92.7329 33.2977Z" fill="#FCFCFA"></path>
+<path d="M105 29.807L99.0213 30.6759C99.2039 32.4878 100.088 33.3913 101.682 33.3913C102.625 33.3913 103.445 33.2086 104.146 32.8482L104.669 34.2404C103.835 34.6996 102.764 34.9267 101.445 34.9267C100.048 34.9267 98.9423 34.4873 98.1326 33.6035C97.3229 32.7248 96.923 31.4658 96.923 29.8366C96.923 28.2073 97.2933 27.0225 98.0338 26.1338C98.7744 25.2451 99.7964 24.8008 101.085 24.8008C102.374 24.8008 103.381 25.2254 104.057 26.0795C104.733 26.9336 105.044 28.1728 105 29.802V29.807ZM102.931 28.938C102.931 27.0916 102.29 26.1683 101.011 26.1683C100.335 26.1683 99.8161 26.4399 99.4508 26.983C99.0558 27.5754 98.8682 28.4345 98.8929 29.5552L102.931 28.938Z" fill="#FCFCFA"></path>
+<path d="M112.593 31.9398C112.593 32.7593 112.272 33.4604 111.635 34.038C110.994 34.6156 110.154 34.9069 109.118 34.9069C108.007 34.9069 107.103 34.6749 106.417 34.2009L106.995 32.7889C107.469 33.1641 108.076 33.3518 108.826 33.3518C109.271 33.3518 109.636 33.2234 109.912 32.9617C110.189 32.7001 110.327 32.3742 110.327 31.9743C110.327 31.5744 110.214 31.2436 110.001 31.0067C109.784 30.7697 109.414 30.5574 108.895 30.3648C107.409 29.7971 106.664 28.8837 106.664 27.6297C106.664 26.8299 106.95 26.1585 107.523 25.6154C108.096 25.0723 108.841 24.8008 109.759 24.8008C110.747 24.8008 111.591 25.0279 112.292 25.492L111.749 26.7756C111.305 26.4152 110.786 26.2325 110.194 26.2325C109.759 26.2325 109.419 26.356 109.172 26.6028C108.925 26.8497 108.802 27.1558 108.802 27.5162C108.802 28.158 109.285 28.6714 110.248 29.0565C111.803 29.6835 112.583 30.6463 112.583 31.9348L112.593 31.9398Z" fill="#FCFCFA"></path>
+<path d="M51.2668 18.1561H49.8597V13.7424C49.8597 13.0463 49.4845 12.7007 48.739 12.7007C48.3885 12.7007 48.0626 12.7599 47.7713 12.8735V18.1561H46.3643V12.2662C47.0011 11.9651 47.8158 11.812 48.7982 11.812C49.6671 11.812 50.309 12.0046 50.7237 12.3896C51.0841 12.7155 51.2668 13.1549 51.2668 13.7177V18.1561Z" fill="#FCFCFA"></path>
+<path d="M54.2983 10.1576C54.2983 10.3501 54.2242 10.5131 54.0712 10.6513C53.9181 10.7895 53.7355 10.8537 53.5232 10.8537C53.3109 10.8537 53.1282 10.7846 52.9752 10.6513C52.8221 10.5131 52.748 10.3551 52.748 10.1576C52.748 9.96012 52.8221 9.80214 52.9752 9.6639C53.1282 9.52566 53.3109 9.45654 53.5232 9.45654C53.7355 9.45654 53.9231 9.52566 54.0712 9.65896C54.2242 9.79226 54.2983 9.96012 54.2983 10.1625V10.1576ZM54.2242 18.1606H52.8172V11.93H54.2242V18.1606Z" fill="#FCFCFA"></path>
+<path d="M60.6421 11.9294L58.6426 18.16H57.2997L55.2657 11.9294H56.7665L57.8675 15.9482C57.9514 16.2494 58.0008 16.5357 58.0156 16.8023H58.0403C58.0798 16.5801 58.1341 16.2938 58.1983 15.9482L59.319 11.9294H60.6421Z" fill="#FCFCFA"></path>
+<path d="M66.541 15.0003L62.7296 15.5533C62.8481 16.7085 63.4109 17.2862 64.4279 17.2862C65.0253 17.2862 65.5487 17.1726 65.9979 16.9455L66.3336 17.8342C65.8004 18.1255 65.1191 18.2736 64.2798 18.2736C63.3862 18.2736 62.6802 17.9922 62.1618 17.4293C61.6434 16.8665 61.3867 16.0667 61.3867 15.025C61.3867 13.9833 61.6237 13.2279 62.0977 12.6651C62.5716 12.0973 63.2184 11.8159 64.0429 11.8159C64.8673 11.8159 65.5042 12.0875 65.9387 12.6305C66.3731 13.1736 66.5706 13.9635 66.541 15.0003ZM65.2277 14.4474C65.2277 13.2674 64.818 12.6799 63.9984 12.6799C63.564 12.6799 63.2332 12.8527 63.0011 13.1983C62.7493 13.5735 62.6309 14.1215 62.6457 14.8374L65.2277 14.4424V14.4474Z" fill="#FCFCFA"></path>
+<path d="M70.827 11.8217L70.5456 12.8536C70.3382 12.7845 70.121 12.7499 69.8988 12.7499C69.6273 12.7499 69.4051 12.7993 69.2274 12.898V18.156H67.8203V12.2562C68.5066 11.9254 69.5088 11.7773 70.827 11.8168V11.8217Z" fill="#FCFCFA"></path>
+<path d="M75.3197 16.3684C75.3197 16.8917 75.1124 17.341 74.7026 17.7112C74.2928 18.0815 73.7596 18.2691 73.098 18.2691C72.3871 18.2691 71.8144 18.1161 71.375 17.8149L71.7453 16.9164C72.0464 17.1534 72.4365 17.2768 72.9154 17.2768C73.2017 17.2768 73.4288 17.1929 73.6065 17.025C73.7843 16.8621 73.8732 16.6498 73.8732 16.3931C73.8732 16.1363 73.804 15.924 73.6658 15.7759C73.5276 15.6278 73.2906 15.4896 72.9598 15.3661C72.0119 15.0057 71.5379 14.4232 71.5379 13.6234C71.5379 13.1149 71.7206 12.6853 72.0859 12.3397C72.4513 11.9941 72.9252 11.8164 73.5127 11.8164C74.1447 11.8164 74.6828 11.9645 75.1321 12.2558L74.7865 13.0754C74.5002 12.8433 74.1694 12.7298 73.7942 12.7298C73.5127 12.7298 73.2955 12.8088 73.1375 12.9667C72.9795 13.1247 72.9006 13.3173 72.9006 13.5493C72.9006 13.9591 73.2066 14.2849 73.8238 14.5318C74.8161 14.9317 75.3148 15.5439 75.3148 16.3733L75.3197 16.3684Z" fill="#FCFCFA"></path>
+<path d="M78.0748 10.1576C78.0748 10.3501 77.9958 10.5131 77.8477 10.6513C77.6996 10.7895 77.512 10.8537 77.2997 10.8537C77.0874 10.8537 76.9047 10.7846 76.7517 10.6513C76.5986 10.5131 76.5246 10.3551 76.5246 10.1576C76.5246 9.96012 76.5986 9.80214 76.7517 9.6639C76.9047 9.52566 77.0824 9.45654 77.2997 9.45654C77.5169 9.45654 77.6996 9.52566 77.8477 9.65896C77.9958 9.79226 78.0748 9.96012 78.0748 10.1625V10.1576ZM78.0007 18.1606H76.5937V11.93H78.0007V18.1606Z" fill="#FCFCFA"></path>
+<path d="M84.3976 17.8202C83.8594 18.1214 83.1337 18.2695 82.2253 18.2695C81.3168 18.2695 80.596 17.993 80.0875 17.4351C79.579 16.8822 79.3223 16.1071 79.3223 15.1098C79.3223 14.1125 79.579 13.3127 80.0875 12.7203C80.5763 12.1476 81.2378 11.8662 82.0525 11.8662C82.4129 11.8662 82.7288 11.9056 82.9905 11.9846V9.47168H84.3976V17.8202ZM82.9905 17.2278V12.7449C82.8078 12.6906 82.6005 12.661 82.3684 12.661C81.2724 12.661 80.7244 13.4509 80.7244 15.0308C80.7244 16.6107 81.2378 17.366 82.2598 17.366C82.6005 17.366 82.8424 17.3216 82.9856 17.2278H82.9905Z" fill="#FCFCFA"></path>
+<path d="M90.3964 17.8199C89.8336 18.1211 89.0832 18.2692 88.1451 18.2692C86.4517 18.2692 85.6025 17.6372 85.6025 16.3734C85.6025 15.6229 85.9481 15.0552 86.6294 14.675C87.1676 14.3837 87.9822 14.1813 89.0782 14.0776V13.7419C89.0782 13.0557 88.6684 12.715 87.844 12.715C87.3256 12.715 86.8072 12.8434 86.2839 13.0952L85.9629 12.2855C86.6097 11.9695 87.3206 11.8115 88.1007 11.8115C89.6312 11.8115 90.3964 12.5274 90.3964 13.9591V17.8199ZM89.0782 17.3163V14.754C88.3426 14.8429 87.8193 14.986 87.5132 15.1835C87.1281 15.4205 86.9355 15.8056 86.9355 16.3388C86.9355 17.109 87.37 17.4941 88.2389 17.4941C88.5697 17.4941 88.8511 17.4348 89.0832 17.3213L89.0782 17.3163Z" fill="#FCFCFA"></path>
+<path d="M96.7413 17.8202C96.2032 18.1214 95.4774 18.2695 94.569 18.2695C93.6606 18.2695 92.9398 17.993 92.4313 17.4351C91.9227 16.8822 91.666 16.1071 91.666 15.1098C91.666 14.1125 91.9227 13.3127 92.4313 12.7203C92.925 12.1476 93.5816 11.8662 94.3962 11.8662C94.7566 11.8662 95.0676 11.9056 95.3343 11.9846V9.47168H96.7413V17.8202ZM95.3343 17.2278V12.7449C95.1516 12.6906 94.9393 12.661 94.7122 12.661C93.6161 12.661 93.0681 13.4509 93.0681 15.0308C93.0681 16.6107 93.5816 17.366 94.6085 17.366C94.9442 17.366 95.1911 17.3216 95.3343 17.2278Z" fill="#FCFCFA"></path>
+<path d="M39.5859 9.48633H41.0868V16.1859C41.0868 16.9215 41.4818 17.2918 42.2766 17.2918C42.6518 17.2918 42.9974 17.2276 43.3085 17.1091V9.48633H44.8044V17.7559C44.1231 18.0719 43.2591 18.2348 42.2124 18.2348C41.2892 18.2348 40.603 18.0324 40.1636 17.6226C39.7785 17.277 39.5859 16.808 39.5859 16.2106V9.48633Z" fill="#FCFCFA"></path>
+</svg><span class="nb-div" aria-hidden="true"></span><span class="nb-unit">Vicerrectoría Administrativa y Financiera</span></a>
+  </div>
+  <nav class="moments idu-stepper" aria-label="Momentos de la actividad"><div class="wrap"><ol id="moments"></ol></div></nav>
+</header>
+
+<div class="hero dark" id="hero">
+  <div class="wrap">
+    <div class="eyebrow">Actividad grupal · Cadena de valor de la Universidad</div>
+    <h1>¿Cómo lo hizo posible la VAF?</h1>
+    <p>Vamos a recorrer un proyecto real desde la necesidad de sus usuarios hasta los servicios de la Vicerrectoría que lo hicieron posible. Primero lo vemos con el caso CoVIDA; después, cada grupo lo hace con un proyecto propio.</p>
+    <div class="divider"></div>
+  </div>
+</div>
+
+<main id="main" tabindex="-1">
+<!-- ============ EJEMPLO ============ -->
+<section class="view" id="v-ejemplo" aria-labelledby="t-ej">
+  <div class="band alt">
+    <div class="wrap">
+      <div class="eyebrow" style="color:var(--secondarytext)">Momento 1 · Ejemplo</div>
+      <h2 class="sec-title" id="t-ej" style="margin-top:8px">Caso CoVIDA</h2>
+      <h3 class="ctx-title"><span class="n">01</span>Contexto</h3>
+      <p class="sec-intro" style="margin-top:8px">Ante la pandemia, la Universidad creó CoVIDA para detectar tempranamente contagios de COVID-19 y generar información que apoyara la toma de decisiones en salud pública.</p>
+
+
+      <div class="ex-grid" id="exGrid" style="margin-top:var(--s32)">
+        <div>
+          <figure class="mframe solo"><img src="img/covida.jpg" alt="Jornada de vacunación contra el COVID-19: una profesional de la salud aplica la vacuna en el brazo de un hombre con tapabocas." width="960" height="539"><figcaption>Foto: Bogota.gov.co</figcaption></figure>
+          <article class="step" data-n="2">
+            <div class="num">02</div>
+            <h4>Usuarios y necesidades</h4>
+            <p class="q">¿Cuáles fueron los usuarios? ¿Cuáles eran las necesidades del usuario que se resolvieron a través de este proyecto?</p>
+            <div class="ans">
+              <div class="iconrow"><span class="ms" aria-hidden="true">groups</span><p><b>Usuarios:</b> profesores y estudiantes de investigación.</p></div>
+              <div class="iconrow"><span class="ms" aria-hidden="true">target</span><p><b>Necesidad:</b> realizar la toma de muestras para hacer vigilancia epidemiológica.</p></div>
+            </div>
+          </article>
+          <article class="step" data-n="3">
+            <div class="num">03</div>
+            <h4>Escenarios de la cadena</h4>
+            <p class="q">¿Con qué escenarios de la cadena de valor se conecta más CoVIDA?</p>
+            <div class="ans">
+              <ul class="scen" id="exScen"></ul>
+            </div>
+          </article>
+        </div>
+
+        <div>
+          <div class="zone-title"><h3>¿Cómo lo hizo posible la VAF?</h3><span>04 – 06</span></div>
+          <div class="how">
+            <article class="step" data-n="4">
+<div class="head">              <div class="num">04</div>
+              <h4>Actividades</h4>
+              <p class="q">¿Qué tuvo que hacer la VAF para que CoVIDA pudiera operar?</p></div>
+              <div class="ans">
+                <ul class="icolist">
+                  <li><span class="ms" aria-hidden="true">payments</span><span>Gestión de recursos y presupuesto</span></li>
+                  <li><span class="ms" aria-hidden="true">badge</span><span>Vinculación y administración de personal</span></li>
+                  <li><span class="ms" aria-hidden="true">school</span><span>Capacitación de equipos</span></li>
+                  <li><span class="ms" aria-hidden="true">shopping_cart</span><span>Contratación y compras de servicios externos</span></li>
+                  <li><span class="ms" aria-hidden="true">meeting_room</span><span>Separación de espacios para toma de muestras</span></li>
+                  <li><span class="ms" aria-hidden="true">inventory_2</span><span>Almacenamiento de muestras</span></li>
+                </ul>
+                <p class="note">La lista no representa la totalidad de lo realizado.</p>
+              </div>
+            </article>
+            <article class="step" data-n="5">
+<div class="head">              <div class="num">05</div>
+              <h4>Equipos</h4>
+              <p class="q">¿Qué equipos hicieron posible cada actividad en CoVIDA?</p></div>
+              <div class="ans">
+                <ol>
+                  <li>Finanzas y Planeación Financiera</li>
+                  <li>Gestión Humana</li>
+                  <li>Centro Médico y áreas especializadas</li>
+                  <li>Abastecimiento Estratégico, compras y Jurídica</li>
+                  <li>Gerencia del Campus</li>
+                  <li>GNI</li>
+                </ol>
+                <p class="note">La lista no representa la totalidad de lo realizado.</p>
+              </div>
+            </article>
+            <article class="step" data-n="6">
+<div class="head">              <div class="num">06</div>
+              <h4>Servicios</h4>
+              <p class="q">¿Qué servicios de la VAF agrupan esas actividades? ¿Por qué nombraron así cada servicio?</p></div>
+              <div class="ans">
+                <ul>
+                  <li>Gestión presupuestal y financiera</li>
+                  <li>Gestión de talento humano</li>
+                  <li>Desarrollo y formación</li>
+                  <li>Gestión de compras, abastecimiento y proveedores</li>
+                  <li>Gestión de espacios e infraestructura</li>
+                </ul>
+              </div>
+            </article>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="next-cta dark">
+        <h3>Ahora es su turno</h3>
+        <a class="btn primary lg" href="#tarea">Continuar a la actividad en grupos<span class="ms">arrow_forward</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAREA ============ -->
+<section class="view" id="v-tarea" aria-labelledby="t-ta">
+  <div class="band alt">
+    <div class="wrap">
+      <div style="max-width:760px;margin:0 auto var(--s24)"><div class="eyebrow" style="color:var(--secondarytext)">Momento 2 · Actividad en grupos</div><h2 class="sec-title" id="t-ta" style="margin-top:8px">Su caso</h2><p class="sec-intro" style="font-size:18px;line-height:28px">Elijan un proyecto real en el que hayan tenido que trabajar con otros equipos para sacarlo adelante, y recórranlo con los mismos pasos del caso CoVIDA. Al final descargarán sus respuestas en un archivo CSV.</p></div>
+      <div class="guide" id="wiz">
+        <div class="g-top" id="gTop"></div>
+        <div class="g-body" id="wizBody"></div>
+        <div class="g-foot" id="gFoot"></div>
+      </div>
+      <div class="g-meta"><span class="status" id="status" aria-live="polite"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CASOS ============ -->
+<section class="view" id="v-casos" aria-labelledby="t-ca">
+  <div class="band alt">
+    <div class="wrap">
+      <div class="eyebrow" style="color:var(--secondarytext)">Momento 3 · Puesta en común</div>
+      <h2 class="sec-title" id="t-ca" style="margin-top:8px">Casos de los grupos</h2>
+      <p class="sec-intro">Carguen los archivos CSV que descargó cada grupo. Abran una ficha para presentarla.</p>
+      <div id="casesBox"></div>
+      <div id="aggBox"></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="overlay" id="ov" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+  <div class="dlg">
+    <div class="dlg-head">
+      <div class="tt"><div class="eyebrow" id="dlgGroup" style="color:var(--secondarytext)"></div><h3 id="dlgTitle"></h3></div>
+            <span class="confirm" id="dlgConfirm">¿Quitar este caso de la vista? <button class="btn secondary" id="dlgDelYes">Sí, quitar</button><button class="btn tertiary" id="dlgDelNo">No</button></span>
+      <button class="iconbtn" id="dlgDel" aria-label="Quitar caso de la vista" title="Quitar caso de la vista"><span class="ms">delete</span></button>
+      <button class="iconbtn" id="dlgClose" aria-label="Cerrar"><span class="ms">close</span></button>
+    </div>
+    <div class="dlg-body" id="dlgBody"></div>
+  </div>
+</div>
+
+<footer class="dark"><div class="wrap"><b>Vicerrectoría Administrativa y Financiera</b> · Universidad de los Andes · Actividad: Cadena de valor de la Universidad</div></footer>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+const ESCENARIOS=[
+ "Egresados con capacidades para aprender, transformar y aportar valor",
+ "Comunidad uniandina conectada a lo largo de la vida",
+ "Trayectorias de formación y generación de conocimiento",
+ "Conocimiento, creación, publicaciones, propiedad intelectual y conocimiento abierto",
+ "Soluciones, transferencia, incidencia y servicios al entorno",
+ "Personas y organizaciones con capacidades renovadas a lo largo de la vida"
+];
+
+/* ---------- Routing ---------- */
+const VIEWS=["ejemplo","tarea","casos"];
+function route(){
+  let h=(location.hash||"").slice(1); if(!VIEWS.includes(h)) h="ejemplo";
+  VIEWS.forEach(v=>{
+    $("#v-"+v).classList.toggle("on",v===h);
+  });
+  $("#hero").hidden=(h==="tarea");
+  const MN=["Caso CoVIDA","Actividad en grupos","Puesta en común"], cur=VIEWS.indexOf(h);
+  $("#moments").innerHTML=VIEWS.map((v,i)=>{const st=i<cur?"success":(i===cur?"active":"disabled");return '<li class="'+st+(i>0&&i-1<cur?" after-success":"")+'"><a href="#'+v+'"'+(i===cur?' aria-current="step"':"")+'><span class="sym">'+(i+1)+'</span><span class="txt">'+MN[i]+'</span></a></li>';}).join("");
+  if(h==="casos") renderCases();
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",route);
+
+/* ---------- Ejemplo ---------- */
+$("#exScen").innerHTML=[3,0,1,2,4,5].map(i=>[ESCENARIOS[i],i]).map(([e,i])=>'<li class="'+(i===3?"hit":"")+'">'+(i===3?'<span class="ms" aria-hidden="true">star</span>':'<span class="ms" aria-hidden="true" style="visibility:hidden">star</span>')+'<span>'+esc(e)+(i===3?' <span class="sr">(el más conectado con CoVIDA)</span>':"")+'</span></li>').join("");
+/* ---------- Estado del caso ---------- */
+function necList(c){const n=c.necesidades; if(Array.isArray(n)) return n; return (n||"").split(/\r?\n/).map(x=>x.replace(/^\s*[-•*]\s*/,""));}
+function blank(){return{grupo:"",proyecto:"",reto:"",participantes:["","",""],usuarios:"",otrosUsuarios:[],necesidades:["","",""],orden:[],descartes:[],actividades:[{a:"",e:""}],servicios:[{n:"",p:"",acts:[]}],};}
+function sortState(c){let o=Array.isArray(c.orden)?c.orden:null,d=Array.isArray(c.descartes)?c.descartes:[]; if(!o){o=c.ordenTocado&&Array.isArray(c.escenarios)?c.escenarios.slice():[];} o=o.filter(i=>i>=0&&i<6); d=d.filter(i=>i>=0&&i<6&&!o.includes(i)); const pool=ESCENARIOS.map((_,i)=>i).filter(i=>!o.includes(i)&&!d.includes(i)); return {o,d,pool};}
+let caso=blank(), casoId=null, wStep=0, db=null, dbReady=false, saveT=null, allCases=[];
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch(e){}}
+try{const d=JSON.parse(lsGet("vaf-draft")||"null"); if(d&&d.caso){caso=Object.assign(blank(),d.caso);caso.necesidades=necList(caso);if(!caso.necesidades.length)caso.necesidades=["","",""];while(caso.participantes.length<3&&caso.participantes.every(x=>!(x||"").trim()))caso.participantes.push("");const t=sortState(caso);caso.orden=t.o;caso.descartes=t.d;delete caso.escenarios;delete caso.ordenTocado;casoId=d.id||null;}}catch(e){}
+function newId(){return "c"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+
+/* ---------- Guía paso a paso ---------- */
+const EXAMPLES={
+ grupo:"<p>Por ejemplo: <b>Grupo 3</b> o los nombres de quienes lo integran.</p>",
+ proyecto:"<p>En el ejemplo, el caso se llama <b>CoVIDA</b>.</p>",
+ reto:"<p>Ante la pandemia, la Universidad creó CoVIDA para detectar tempranamente contagios de COVID-19 y generar información que apoyara la toma de decisiones en salud pública.</p>",
+ usuarios:"<p>Profesores y estudiantes de investigación.</p>",
+ necesidades:"<p>Realizar la toma de muestras para hacer vigilancia epidemiológica.</p>",
+ esc:"<p>El escenario más conectado fue <b>Conocimiento, creación, publicaciones, propiedad intelectual y conocimiento abierto</b>.</p>",
+ acts:"<ul><li>Gestión de recursos y presupuesto</li><li>Vinculación y administración de personal</li><li>Capacitación de equipos</li><li>Contratación y compras de servicios externos</li><li>Separación de espacios para toma de muestras</li><li>Almacenamiento de muestras</li></ul>",
+ eqs:"<ul><li>Gestión de recursos y presupuesto → Finanzas y Planeación Financiera</li><li>Contratación de servicios externos → Abastecimiento Estratégico y Jurídica</li><li>Habilitación de espacios → Gerencia de Campus y Planta Física</li></ul>",
+ svcs:"<ul><li>Gestión presupuestal y financiera</li><li>Gestión de talento humano</li><li>Desarrollo y formación</li><li>Gestión de compras, abastecimiento y proveedores</li><li>Gestión de espacios e infraestructura</li></ul>"
+};
+const SEC={caso:{ic:"edit_note",t:"Su caso"},c01:{n:"01",t:"Contexto"},c02:{n:"02",t:"Necesidades"},c03:{n:"03",t:"Escenarios de la cadena"},c04:{n:"04",t:"Actividades"},c05:{n:"05",t:"Equipos"},c06:{n:"06",t:"Servicios"}};
+const SCREENS=[
+ {id:"proyecto",sec:"caso",q:"Nombre de su caso",help:"Un proyecto real en el que hayan tenido que trabajar con otros equipos para sacarlo adelante. Debajo, escriban quiénes participan.",k:"proyecto",type:"line",req:true,ph:"Nombre del caso"},
+ {id:"reto",sec:"c01",q:"¿Qué reto tenía el proyecto y qué se propuso lograr?",help:"Cuéntenlo en dos o tres frases.",k:"reto",type:"text",ex:"reto"},
+ {id:"usuarios",sec:"c02",q:"¿Quiénes fueron los usuarios?",help:"Escriban el usuario principal del proyecto. Si hubo otros perfiles de usuario, agréguenlos debajo.",k:"usuarios",type:"users",ex:"usuarios"},
+ {id:"necesidades",sec:"c02",q:"¿Qué necesidades de esos usuarios resolvió el proyecto?",help:"Escriban una necesidad en cada campo. Pueden agregar o quitar campos.",type:"needs",ex:"necesidades"},
+ {id:"esc",sec:"c03",q:"Organicen los escenarios de la cadena",help:"De mayor a menor importancia para su caso. Si alguno no aplica, prescindan de él.",type:"sort",ex:"esc"},
+ {id:"acts",sec:"c04",q:"¿Qué tuvo que hacer la VAF para que el proyecto pudiera operar?",help:"Escriban una actividad por línea. Con Enter agregan la siguiente.",type:"acts",ex:"acts"},
+ {id:"eqs",sec:"c05",q:"¿Qué equipos hacen posible hoy cada actividad?",help:"Escriban los equipos al lado de cada actividad.",type:"eqs",ex:"eqs"},
+ {id:"svcs",sec:"c06",q:"¿Qué servicios de la VAF agrupan esas actividades?",help:"Nombren cada servicio, cuenten por qué lo llamaron así y marquen las actividades que agrupa.",type:"svcs",ex:"svcs"},
+ {id:"fin"}
+];
+const NQ=SCREENS.length-1; // preguntas sin contar la ficha final
+function filled(i,c){c=c||caso;
+  const acts=(c.actividades||[]).filter(x=>x.a&&x.a.trim());
+  switch(i){
+   case 0:return !!(c.proyecto||"").trim();
+   case 1:return !!(c.reto||"").trim();
+   case 2:return !!((c.usuarios||"").trim()||(c.otrosUsuarios||[]).some(x=>(x||"").trim())||necList(c).some(x=>(x||"").trim()));
+   case 3:{const t=sortState(c);return t.o.length>0||t.d.length>0;}
+   case 4:return acts.length>0;
+   case 5:return acts.length>0&&acts.every(x=>x.e&&x.e.trim());
+   case 6:return (c.servicios||[]).some(s=>s.n&&s.n.trim());
+  } return false;}
+function progress(c){let k=0;for(let i=1;i<=6;i++) if(filled(i,c)) k++; return k;}
+function canGo(sc){ if(sc.req) return !!(caso[sc.k]||"").trim(); return true; }
+function hasDraft(){return !!((caso.grupo||"").trim()||(caso.proyecto||"").trim());}
+
+function renderWiz(focusSel){
+  const sc=SCREENS[wStep], B=$("#wizBody"), T=$("#gTop"), F=$("#gFoot");
+  // barra superior
+  {
+    const qn=Math.min(wStep+1,NQ);
+    T.innerHTML='<div class="row1">'+(wStep>0?'<button class="g-back" id="gBack"><span class="ms" aria-hidden="true">arrow_back</span><span class="t">Atrás</span></button>':'')+'<span class="g-count">'+(sc.id==="fin"?"Ficha completa":"Pregunta "+qn+" de "+NQ)+'</span></div><div class="g-bar" aria-hidden="true"><i style="width:'+(sc.id==="fin"?100:Math.round((qn-1)/NQ*100))+'%"></i></div>';
+  }
+  let h="";
+  const crumb=s=>{const m=SEC[s];return '<div class="g-crumb">'+(m.n?'<span class="num">'+m.n+'</span>':'<span class="ms">'+m.ic+'</span>')+esc(m.t)+'</div>';};
+  const ex=k=>'<details class="g-ex"><summary><span class="ms">lightbulb</span>Ver cómo lo respondimos en CoVIDA<span class="ms chev" style="margin-left:auto">expand_more</span></summary><div class="exb">'+EXAMPLES[k]+'</div></details>';
+  if(sc.id==="fin"){
+    h='<div class="g-done"><span class="ms">task_alt</span>Su caso quedó listo. Descarguen sus respuestas y entreguen el archivo a quien facilita.</div><h2 class="g-q" style="margin-bottom:var(--s24)">'+esc(caso.proyecto||"Su caso")+'</h2>'+fichaHTML(caso);
+    F.innerHTML='<div class="g-actions"><button class="btn primary" id="dlCsv"><span class="ms">'+(canDL()?'download':'content_copy')+'</span>'+(canDL()?'Descargar respuestas CSV':'Copiar respuestas CSV')+'</button>'+(canDL()?'<button class="btn secondary" id="copyCsv"><span class="ms">content_copy</span>Copiar CSV</button>':'')+'<button class="btn tertiary g-new" id="newCase"><span class="ms">add</span>Empezar otro caso</button></div>';
+  } else {
+    h=crumb(sc.sec)+'<h2 class="g-q" id="gQ">'+esc(sc.q)+'</h2><p class="g-help">'+esc(sc.help)+'</p><div class="g-field">';
+    if(sc.type==="line") h+='<input type="text" id="gIn" data-k="'+sc.k+'" maxlength="120" aria-labelledby="gQ" placeholder="'+esc(sc.ph)+'" value="'+esc(caso[sc.k]||"")+'">';
+    if(sc.id==="proyecto"){ if(!Array.isArray(caso.participantes)||!caso.participantes.length) caso.participantes=["","",""];
+      h+='<div style="margin-top:var(--s32)"><div class="f" id="partLbl" style="font-size:16px;font-weight:700;margin-bottom:12px">Participantes</div><div class="rows" role="group" aria-labelledby="partLbl">'+caso.participantes.map((n,i)=>'<div class="row one"><span class="idx">'+(i+1)+'</span><input type="text" data-part="'+i+'" maxlength="80" aria-label="Participante '+(i+1)+'" placeholder="Nombre y apellido" value="'+esc(n)+'"><button class="iconbtn" data-delpart="'+i+'" aria-label="Eliminar participante '+(i+1)+'" title="Eliminar participante"'+(caso.participantes.length<2?" disabled":"")+'><span class="ms">person_remove</span></button></div>').join("")+'</div><button class="btn tertiary" id="addPart" style="margin-top:12px"><span class="ms">person_add</span>Agregar participante</button></div>';}
+    else if(sc.type==="text") h+='<textarea id="gIn" data-k="'+sc.k+'" maxlength="1500" aria-labelledby="gQ">'+esc(caso[sc.k]||"")+'</textarea>';
+    else if(sc.type==="users"){ if(!Array.isArray(caso.otrosUsuarios)) caso.otrosUsuarios=[];
+      h+='<label class="f" for="gIn" style="font-size:16px;margin-bottom:8px">Usuario principal</label><textarea id="gIn" data-k="usuarios" maxlength="600" style="min-height:96px" placeholder="Por ejemplo: profesores y estudiantes de investigación">'+esc(caso.usuarios||"")+'</textarea>'+
+        (caso.otrosUsuarios.length?'<div class="f" style="font-size:16px;font-weight:600;margin:24px 0 8px">Otros perfiles de usuario</div><div class="rows">'+caso.otrosUsuarios.map((u,i)=>'<div class="row one"><span class="idx">'+(i+2)+'</span><input type="text" data-ou="'+i+'" maxlength="200" aria-label="Perfil de usuario '+(i+2)+'" placeholder="Otro perfil de usuario" value="'+esc(u)+'"><button class="iconbtn" data-delou="'+i+'" aria-label="Eliminar perfil de usuario '+(i+2)+'" title="Eliminar perfil"><span class="ms">close</span></button></div>').join("")+'</div>':'')+
+        '<button class="btn tertiary" id="addOu" style="margin-top:12px"><span class="ms">person_add</span>Agregar otro perfil de usuario</button>';}
+    else if(sc.type==="needs"){ caso.necesidades=necList(caso); if(!caso.necesidades.length) caso.necesidades=["","",""];
+      h+='<div class="rows">'+caso.necesidades.map((n,i)=>'<div class="row one"><span class="idx">'+(i+1)+'</span><input type="text" data-nec="'+i+'" maxlength="240" aria-label="Necesidad '+(i+1)+'" placeholder="Necesidad" value="'+esc(n)+'"><button class="iconbtn" data-delnec="'+i+'" aria-label="Eliminar necesidad '+(i+1)+'" title="Eliminar necesidad"'+(caso.necesidades.length<2?" disabled":"")+'><span class="ms">close</span></button></div>').join("")+'</div><button class="btn tertiary" id="addNec" style="margin-top:12px"><span class="ms">add</span>Agregar necesidad</button>';}
+    else if(sc.type==="sort") h+=sortHTML();
+    else if(sc.type==="acts") h+='<div class="rows">'+caso.actividades.map((r,i)=>'<div class="row one"><span class="idx">'+(i+1)+'</span><input type="text" data-act="'+i+'" data-f="a" maxlength="160" aria-label="Actividad '+(i+1)+'" placeholder="Actividad" value="'+esc(r.a)+'"><button class="iconbtn del" data-delact="'+i+'" aria-label="Quitar actividad '+(i+1)+'"'+(caso.actividades.length<2?" disabled":"")+'><span class="ms">close</span></button></div>').join("")+'</div><button class="btn tertiary" id="addAct" style="margin-top:12px"><span class="ms">add</span>Agregar actividad</button>';
+    else if(sc.type==="eqs"){const acts=caso.actividades.map((r,i)=>({r,i})).filter(x=>x.r.a.trim());
+      h+=acts.length?'<div class="rows">'+acts.map(({r,i},k)=>'<div class="field" style="margin:0"><label class="f" for="eq'+i+'"><span class="eyebrow" style="display:block;color:var(--secondarytext);margin-bottom:4px">Actividad '+(k+1)+'</span>'+esc(r.a)+'</label><input type="text" id="eq'+i+'" data-act="'+i+'" data-f="e" maxlength="200" placeholder="Equipos involucrados hoy" value="'+esc(r.e)+'"></div>').join("")+'</div>':'<p class="help">Primero escriban las actividades en la pregunta anterior.</p>';}
+    else if(sc.type==="svcs"){const acts=caso.actividades.map((r,i)=>({a:r.a.trim(),i})).filter(x=>x.a);
+      h+='<div class="rows" style="gap:var(--s24)">'+caso.servicios.map((s,si)=>'<fieldset class="svc2"><legend class="eyebrow">Servicio '+(si+1)+'</legend>'+
+        (caso.servicios.length>1?'<button class="btn tertiary sm svc-del" data-delsvc="'+si+'"><span class="ms">close</span>Quitar</button>':'')+
+        '<div class="field"><label class="f" for="sn'+si+'">Nombre del servicio</label><input type="text" id="sn'+si+'" data-svc="'+si+'" data-f="n" maxlength="120" placeholder="Por ejemplo: Gestión de compras" value="'+esc(s.n)+'"></div>'+
+        '<div class="field"><label class="f" for="sp'+si+'">¿Por qué lo nombraron así?</label><input type="text" id="sp'+si+'" data-svc="'+si+'" data-f="p" maxlength="300" value="'+esc(s.p)+'"></div>'+
+        (acts.length?'<div class="f" style="margin-bottom:8px">¿Qué actividades agrupa?</div><div class="checks">'+acts.map(x=>'<label class="chk"><input type="checkbox" data-svc="'+si+'" data-tog="'+x.i+'"'+((s.acts||[]).includes(x.i)?" checked":"")+'><span>'+esc(x.a)+'</span></label>').join("")+'</div>':'<p class="help">Escriban primero las actividades para poder asociarlas.</p>')+
+        '</fieldset>').join("")+'</div><button class="btn secondary" id="addSvc" style="margin-top:16px"><span class="ms">add</span>Agregar otro servicio</button>';}
+    h+='</div>';
+    const last=wStep===SCREENS.length-2;
+    F.innerHTML=(sc.type==="line"?'<span class="tip">Pulsen Enter para continuar</span>':"")+'<button class="btn primary lg" id="gNext"'+(canGo(sc)?"":" disabled")+'>'+(last?"Ver la ficha":"Continuar")+'<span class="ms">arrow_forward</span></button>';
+  }
+  B.innerHTML=h;
+  const f=focusSel?B.querySelector(focusSel):(sc.type==="line"||sc.type==="text"?$("#gIn"):null);
+  if(f){f.focus({preventScroll:true}); if(f.setSelectionRange&&f.value!=null){const L=f.value.length; try{f.setSelectionRange(L,L);}catch(e){}}}
+}
+function sortList(c){const t=sortState(c);return t.o.concat(t.pool);}
+function sortHTML(){
+  const t=sortState(caso), list=sortList(caso);
+  const card=(i,zone,pos)=>'<div class="scard'+(zone==="d"?" off":"")+'" data-card="'+i+'" data-zone="'+zone+'">'+(zone==="o"?'<span class="ms grip" aria-hidden="true">drag_indicator</span><span class="pos">'+(pos+1)+'</span>':'<span class="ms grip" aria-hidden="true">block</span>')+'<span class="txt">'+esc(ESCENARIOS[i])+'</span><span class="acts">'+
+    (zone==="o"?'<button class="iconbtn" data-act3="up" data-i="'+i+'" aria-label="Subir: '+esc(ESCENARIOS[i])+'" title="Subir"'+(pos===0?" disabled":"")+'><span class="ms">arrow_upward</span></button><button class="iconbtn" data-act3="down" data-i="'+i+'" aria-label="Bajar: '+esc(ESCENARIOS[i])+'" title="Bajar"'+(pos===list.length-1?" disabled":"")+'><span class="ms">arrow_downward</span></button><button class="btn tertiary sm" data-act3="out" data-i="'+i+'" aria-label="Prescindir de: '+esc(ESCENARIOS[i])+'">Prescindir</button>'
+    :'<button class="btn tertiary sm" data-act3="back" data-i="'+i+'" aria-label="Recuperar: '+esc(ESCENARIOS[i])+'"><span class="ms">undo</span>Recuperar</button>')+'</span></div>';
+  return '<div class="sort" id="sort">'+
+    '<div class="zone ranked" data-drop="o"><div class="zh"><span class="ms">format_list_numbered</span>De mayor a menor importancia<span class="ct">Arrastren para ordenar</span></div>'+(list.length?list.map((i,p)=>card(i,"o",p)).join(""):'<div class="zempty">Prescindieron de todos los escenarios. Recuperen al menos uno.</div>')+'</div>'+
+    '<div class="zone out" data-drop="d"><div class="zh"><span class="ms">block</span>Prescindimos<span class="ct">'+t.d.length+'</span></div>'+(t.d.length?t.d.map(i=>card(i,"d")).join(""):'<div class="zempty">Los escenarios que no apliquen al caso quedarán aquí.</div>')+'</div>'+
+    '</div>'+((t.o.length||t.d.length)?'':'<p class="help" style="margin-top:12px">Si el orden inicial ya les sirve, pueden continuar.</p>');
+}
+function go(n){wStep=Math.max(0,Math.min(SCREENS.length-1,n));renderWiz();const g=$("#wiz");if(g.getBoundingClientRect().top<70)g.scrollIntoView({block:"start"});}
+$("#wiz").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.id==="gNext"){ if(SCREENS[wStep].type==="sort"){const t=sortState(caso); if(!t.o.length&&!t.d.length){caso.orden=sortList(caso);changed(false);}} go(wStep+1);return;}
+  if(b.id==="gBack"){go(wStep-1);return;}
+  if(b.id==="dlCsv"){downloadCSV();return;}
+  if(b.id==="copyCsv"){copyCSV();return;}
+  if(b.id==="newCase"){caso=blank();casoId=null;lsSet("vaf-draft",null);setStatus("");go(0);return;}
+});
+function updateNext(){const n=$("#gNext"),sc=SCREENS[wStep]; if(n&&sc.req) n.disabled=!canGo(sc);}
+
+$("#wizBody").addEventListener("input",e=>{
+  const t=e.target;
+  if(t.dataset.k){caso[t.dataset.k]=t.value;}
+  else if(t.dataset.act!=null){caso.actividades[+t.dataset.act][t.dataset.f]=t.value;}
+  else if(t.dataset.svc!=null){caso.servicios[+t.dataset.svc][t.dataset.f]=t.value;}
+  else if(t.dataset.part!=null){caso.participantes[+t.dataset.part]=t.value;}
+  else if(t.dataset.nec!=null){caso.necesidades[+t.dataset.nec]=t.value;}
+  else if(t.dataset.ou!=null){caso.otrosUsuarios[+t.dataset.ou]=t.value;}
+  changed(false); updateNext();
+});
+$("#wizBody").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.act3){const i=+b.dataset.i;let o=sortList(caso),d=sortState(caso).d.slice();const k=o.indexOf(i);
+    if(b.dataset.act3==="out"){o=o.filter(x=>x!==i);d.push(i);}
+    else if(b.dataset.act3==="back"){d=d.filter(x=>x!==i);o.push(i);}
+    else if(b.dataset.act3==="up"&&k>0){[o[k-1],o[k]]=[o[k],o[k-1]];}
+    else if(b.dataset.act3==="down"&&k<o.length-1){[o[k+1],o[k]]=[o[k],o[k+1]];}
+    caso.orden=o;caso.descartes=d;const f=b.dataset.act3==="up"||b.dataset.act3==="down"?'[data-act3="'+b.dataset.act3+'"][data-i="'+i+'"]':null;changed(true,f);return;}
+  if(b.id==="addNec"){caso.necesidades.push("");changed(true,'[data-nec="'+(caso.necesidades.length-1)+'"]');return;}
+  if(b.dataset.delnec!=null){caso.necesidades.splice(+b.dataset.delnec,1);if(!caso.necesidades.length)caso.necesidades=[""];changed(true);return;}
+  if(b.id==="addOu"){caso.otrosUsuarios.push("");changed(true,'[data-ou="'+(caso.otrosUsuarios.length-1)+'"]');return;}
+  if(b.dataset.delou!=null){caso.otrosUsuarios.splice(+b.dataset.delou,1);changed(true);return;}
+  if(b.id==="addPart"){caso.participantes.push("");changed(true,'[data-part="'+(caso.participantes.length-1)+'"]');return;}
+  if(b.dataset.delpart!=null){caso.participantes.splice(+b.dataset.delpart,1);if(!caso.participantes.length)caso.participantes=[""];changed(true,'[data-part="'+Math.max(0,+b.dataset.delpart-1)+'"]');return;}
+  if(b.id==="addAct"){caso.actividades.push({a:"",e:""});changed(true,'[data-act="'+(caso.actividades.length-1)+'"]');return;}
+  if(b.dataset.delact!=null){const i=+b.dataset.delact; caso.actividades.splice(i,1); caso.servicios.forEach(s=>{s.acts=(s.acts||[]).filter(x=>x!==i).map(x=>x>i?x-1:x);}); changed(true); return;}
+  if(b.id==="addSvc"){caso.servicios.push({n:"",p:"",acts:[]});changed(true,'[data-svc="'+(caso.servicios.length-1)+'"][data-f="n"]');return;}
+  if(b.dataset.delsvc!=null){caso.servicios.splice(+b.dataset.delsvc,1);changed(true);return;}
+  if(b.dataset.tog!=null){const s=caso.servicios[+b.dataset.svc], v=+b.dataset.tog; s.acts=s.acts||[]; const k=s.acts.indexOf(v); k<0?s.acts.push(v):s.acts.splice(k,1); changed(true,'[data-svc="'+b.dataset.svc+'"][data-tog="'+v+'"]'); return;}
+});
+$("#wizBody").addEventListener("change",e=>{
+  const t=e.target; if(t.type!=="checkbox"||t.dataset.tog==null) return;
+  const sv=caso.servicios[+t.dataset.svc], v=+t.dataset.tog; sv.acts=(sv.acts||[]).filter(x=>x!==v); if(t.checked) sv.acts.push(v); changed(false);
+});
+$("#wizBody").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.nec!=null){e.preventDefault();const i=+e.target.dataset.nec;caso.necesidades.splice(i+1,0,"");changed(true,'[data-nec="'+(i+1)+'"]');return;}
+  if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.ou!=null){e.preventDefault();const i=+e.target.dataset.ou;caso.otrosUsuarios.splice(i+1,0,"");changed(true,'[data-ou="'+(i+1)+'"]');return;}
+  if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.part!=null){e.preventDefault();const i=+e.target.dataset.part;caso.participantes.splice(i+1,0,"");changed(true,'[data-part="'+(i+1)+'"]');return;}
+  if(e.key==="Enter"&&e.target.id==="gIn"&&e.target.tagName==="INPUT"){e.preventDefault(); if(canGo(SCREENS[wStep])) go(wStep+1); return;}
+  if(e.key==="Enter"&&e.target.matches('input[data-act][data-f="a"]')){e.preventDefault();caso.actividades.push({a:"",e:""});changed(true,'[data-act="'+(caso.actividades.length-1)+'"]');}
+});
+
+/* Card sorting: arrastre con puntero (mouse y táctil) */
+let drag=null;
+$("#wizBody").addEventListener("dragstart",e=>{if(e.target.closest&&e.target.closest(".scard"))e.preventDefault();});
+$("#wizBody").addEventListener("pointerdown",e=>{
+  const c=e.target.closest(".scard"); if(!c||e.target.closest("button")||e.button>0) return;
+  drag={i:+c.dataset.card,el:c,x:e.clientX,y:e.clientY,moved:false,ghost:null,mark:null,target:null,idx:0};
+  c.setPointerCapture&&c.setPointerCapture(e.pointerId);
+});
+$("#wizBody").addEventListener("pointermove",e=>{
+  if(!drag) return;
+  if(!drag.moved){ if(Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y)<6) return; drag.moved=true; drag.el.classList.add("dragging"); drag.ghost=document.createElement("div"); drag.ghost.className="ghost"; drag.ghost.textContent=ESCENARIOS[drag.i]; document.body.appendChild(drag.ghost); drag.mark=document.createElement("div"); drag.mark.className="drop-mark"; }
+  e.preventDefault();
+  drag.ghost.style.left=(e.clientX+12)+"px"; drag.ghost.style.top=(e.clientY+12)+"px";
+  document.querySelectorAll("#sort .zone").forEach(z=>z.classList.remove("over"));
+  const under=document.elementFromPoint(e.clientX,e.clientY); const z=under&&under.closest("#sort .zone");
+  drag.target=z?z.dataset.drop:null; if(drag.mark.parentNode) drag.mark.remove();
+  if(!z) return; z.classList.add("over");
+  const cards=[...z.querySelectorAll(".scard")].filter(x=>x!==drag.el); let idx=cards.length;
+  for(let k=0;k<cards.length;k++){const r=cards[k].getBoundingClientRect(); if(e.clientY<r.top+r.height/2){idx=k;break;}}
+  drag.idx=idx; if(z.dataset.drop==="o"){ if(idx<cards.length) z.insertBefore(drag.mark,cards[idx]); else z.appendChild(drag.mark); }
+});
+function endDrag(apply){
+  if(!drag) return; const d0=drag; drag=null;
+  document.querySelectorAll("#sort .zone").forEach(z=>z.classList.remove("over"));
+  if(d0.ghost) d0.ghost.remove(); if(d0.mark&&d0.mark.parentNode) d0.mark.remove(); d0.el.classList.remove("dragging");
+  if(!apply||!d0.moved||!d0.target) return;
+  let o=sortList(caso).filter(x=>x!==d0.i), d=sortState(caso).d.filter(x=>x!==d0.i);
+  if(d0.target==="o"){o.splice(Math.min(d0.idx,o.length),0,d0.i);} else if(d0.target==="d"){d.push(d0.i);} else return;
+  caso.orden=o; caso.descartes=d; changed(true);
+}
+$("#wizBody").addEventListener("pointerup",()=>endDrag(true));
+$("#wizBody").addEventListener("pointercancel",()=>endDrag(false));
+
+function changed(rerender,focusSel){
+  lsSet("vaf-draft",JSON.stringify({id:casoId,caso}));
+  if(rerender) renderWiz(focusSel);
+  scheduleSave();
+}
+
+/* ---------- Borrador local ---------- */
+function grupoLabel(c){const ps=(c.participantes||[]).filter(x=>(x||"").trim());return (c.grupo||"").trim()||(ps.length?ps.join(" · "):"Sin participantes");}
+function setStatus(kind,msg){
+  const s=$("#status"); s.className="status "+(kind||"");
+  const ic={ok:"check_circle",err:"error",idle:"edit_note"}[kind]||"";
+  s.innerHTML=kind?'<span class="ms" style="font-size:18px">'+ic+'</span>'+esc(msg):"";
+}
+function scheduleSave(){
+  if(!caso.proyecto.trim()&&!caso.grupo.trim()){setStatus("","");return;}
+  setStatus("idle","Borrador guardado en este navegador. Al final podrán descargarlo en CSV.");
+}
+
+/* ---------- CSV ---------- */
+const CSV_HEAD=["seccion","campo","n","valor"];
+function csvCell(v){v=String(v==null?"":v);return /[",;\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+function casoToRows(c){
+  const R=[]; const add=(s,f,n,v)=>{ if(v==null) return; v=String(v); if(!v.trim()&&f!=="grupo"&&f!=="caso") return; R.push([s,f,n==null?"":n,v]); };
+  add("Su caso","grupo",null,c.grupo||""); add("Su caso","caso",null,c.proyecto||"");
+  (c.participantes||[]).filter(x=>(x||"").trim()).forEach((p,i)=>add("Su caso","participante",i+1,p));
+  add("01 Contexto","reto",null,c.reto); add("02 Necesidades","usuarios",null,c.usuarios); (c.otrosUsuarios||[]).filter(x=>(x||"").trim()).forEach((u,i)=>add("02 Necesidades","usuario_adicional",i+2,u)); necList(c).filter(x=>(x||"").trim()).forEach((n,i)=>add("02 Necesidades","necesidad",i+1,n));
+  const t=sortState(c); t.o.forEach((i,k)=>add("03 Escenarios","escenario_orden",k+1,ESCENARIOS[i])); t.d.forEach(i=>add("03 Escenarios","escenario_prescindido",null,ESCENARIOS[i]));
+  const acts=(c.actividades||[]).map((r,i)=>({...r,i})).filter(r=>(r.a||"").trim()); const num={}; acts.forEach((r,k)=>num[r.i]=k+1);
+  acts.forEach((r,k)=>add("04 Actividades","actividad",k+1,r.a.trim())); acts.forEach((r,k)=>add("05 Equipos","equipos",k+1,r.e));
+  (c.servicios||[]).filter(s=>(s.n||"").trim()).forEach((s,k)=>{add("06 Servicios","servicio",k+1,s.n.trim()); add("06 Servicios","servicio_porque",k+1,s.p); const names=(s.acts||[]).filter(i=>num[i]).map(i=>c.actividades[i].a.trim()); if(names.length) add("06 Servicios","servicio_actividades",k+1,names.join(" | "));});
+  return R;
+}
+function casoToCSV(c){return "﻿"+[CSV_HEAD].concat(casoToRows(c)).map(r=>r.map(csvCell).join(",")).join("\r\n")+"\r\n";}
+function parseCSV(text){
+  text=text.replace(/^﻿/,""); const firstLine=text.split(/\r?\n/)[0]||""; const d=(firstLine.split(";").length>firstLine.split(",").length)?";":",";
+  const rows=[]; let row=[], cur="", q=false;
+  for(let i=0;i<text.length;i++){const ch=text[i];
+    if(q){ if(ch==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else if(ch==='"') q=true; else if(ch===d){row.push(cur);cur="";} else if(ch==="\n"||ch==="\r"){ if(ch==="\r"&&text[i+1]==="\n") i++; row.push(cur);rows.push(row);row=[];cur=""; } else cur+=ch; }
+  if(cur!==""||row.length){row.push(cur);rows.push(row);}
+  return rows.filter(r=>r.some(x=>x.trim()!==""));
+}
+function csvToCaso(text){
+  const rows=parseCSV(text); if(!rows.length) throw new Error("El archivo está vacío.");
+  const h=rows[0].map(x=>x.trim().toLowerCase()); const ic=h.indexOf("campo"), inn=h.indexOf("n"), iv=h.indexOf("valor");
+  if(ic<0||iv<0) throw new Error("No es un archivo de respuestas de esta actividad.");
+  const c=blank(); c.participantes=[]; c.otrosUsuarios=[]; c.necesidades=[]; c.actividades=[]; c.servicios=[]; const orden=[], desc=[], acts={}, eqs={}, svc={};
+  rows.slice(1).forEach(r=>{const f=(r[ic]||"").trim(), n=parseInt(r[inn],10)||0, v=r[iv]||"";
+    switch(f){
+      case "grupo": c.grupo=v; break; case "caso": c.proyecto=v; break; case "participante": c.participantes.push(v); break;
+      case "usuario_adicional": c.otrosUsuarios.push(v); break; case "reto": c.reto=v; break; case "usuarios": c.usuarios=v; break; case "necesidades": c.necesidades=c.necesidades.concat(v.split(/\r?\n/)); break; case "necesidad": c.necesidades.push(v); break;
+      case "escenario_orden": {const i=ESCENARIOS.indexOf(v.trim()); if(i>=0) orden[n||orden.length+1]=i; break;}
+      case "escenario_prescindido": {const i=ESCENARIOS.indexOf(v.trim()); if(i>=0) desc.push(i); break;}
+      case "actividad": acts[n]=v; break; case "equipos": eqs[n]=v; break;
+      case "servicio": (svc[n]=svc[n]||{}).n=v; break; case "servicio_porque": (svc[n]=svc[n]||{}).p=v; break; case "servicio_actividades": (svc[n]=svc[n]||{}).a=v; break;
+    }});
+  if(!c.grupo.trim()&&!c.proyecto.trim()) throw new Error("El archivo no tiene nombre de grupo ni de caso.");
+  c.orden=orden.filter(x=>x!=null); c.descartes=desc.filter(i=>!c.orden.includes(i));
+  const keys=Object.keys(acts).map(Number).sort((a,b)=>a-b); c.actividades=keys.map(k=>({a:acts[k],e:eqs[k]||""}));
+  c.servicios=Object.keys(svc).map(Number).sort((a,b)=>a-b).map(k=>{const s=svc[k]; const names=(s.a||"").split("|").map(x=>x.trim()).filter(Boolean); return {n:s.n||"",p:s.p||"",acts:names.map(nm=>c.actividades.findIndex(a=>a.a.trim()===nm)).filter(i=>i>=0)};});
+  if(!c.actividades.length) c.actividades=[{a:"",e:""}]; if(!c.servicios.length) c.servicios=[{n:"",p:"",acts:[]}];
+  return c;
+}
+function fileSlug(s){return (s||"caso").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"caso";}
+let downloadsNS=null; const inClaude=!!(window.claude&&window.claude.use);
+function canDL(){return !!downloadsNS||!inClaude;}
+(async()=>{try{if(window.claude&&window.claude.use){downloadsNS=await window.claude.use("downloads"); if(SCREENS[wStep].id==="fin") renderWiz();}}catch(e){}})();
+async function downloadCSV(){
+  const csv=casoToCSV(caso), name="cadena-de-valor_"+fileSlug(caso.proyecto||caso.grupo)+".csv";
+  if(downloadsNS){ try{ await downloadsNS.save({filename:name,data:csv}); setStatus("ok","Descargaron "+name+". Entréguenlo a quien facilita la actividad."); }catch(e){ setStatus("err","No se descargó el archivo. Intenten de nuevo o usen «Copiar CSV»."); } }
+  else if(!inClaude){ try{ const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); const a=document.createElement("a"); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); setStatus("ok","Descargaron "+name+". Entréguenlo a quien facilita la actividad."); }catch(e){ copyCSV(); } }
+  else copyCSV();
+}
+async function copyCSV(){
+  try{ await navigator.clipboard.writeText(casoToCSV(caso).replace(/^﻿/,"")); setStatus("ok","CSV copiado. Péguenlo en un archivo de texto y guárdenlo con extensión .csv."); }
+  catch(e){ setStatus("err","No se pudo copiar el CSV en este navegador."); }
+}
+
+/* ---------- Ficha ---------- */
+function fichaHTML(c){
+  const E=v=>v&&String(v).trim()?esc(v):'<span class="empty">Sin responder</span>';
+  const acts=(c.actividades||[]).map((r,i)=>({...r,i})).filter(r=>r.a&&r.a.trim());
+  const svcs=(c.servicios||[]).filter(s=>s.n&&s.n.trim());
+  const st3=sortState(c), esc3=st3.o.map(i=>ESCENARIOS[i]);
+  return '<div class="ficha"><div>'+
+    (((c.participantes||[]).filter(x=>(x||'').trim()).length)?'<div class="blk"><div class="lab">Participantes</div><div>'+(c.participantes||[]).filter(x=>(x||'').trim()).map(esc).join(' · ')+'</div></div>':'')+
+    '<div class="blk"><div class="lab"><b>01</b>Contexto</div><div class="pre">'+E(c.reto)+'</div></div>'+
+    '<div class="blk"><div class="lab"><b>02</b>Usuarios</div>'+(((c.otrosUsuarios||[]).filter(x=>(x||'').trim()).length)?'<div class="pre"><b>Principal:</b> '+E(c.usuarios)+'</div><ul class="ulist">'+(c.otrosUsuarios||[]).filter(x=>(x||'').trim()).map(u=>'<li>'+esc(u)+'</li>').join('')+'</ul>':'<div class="pre">'+E(c.usuarios)+'</div>')+'</div>'+'<div class="blk"><div class="lab"><b>02</b>Necesidades</div>'+(necList(c).filter(x=>(x||'').trim()).length?'<ul class="ulist" style="margin-top:0">'+necList(c).filter(x=>(x||'').trim()).map(n=>'<li>'+esc(n)+'</li>').join('')+'</ul>':'<span class="empty">Sin responder</span>')+'</div>'+
+    '<div class="blk"><div class="lab"><b>03</b>Escenarios de mayor a menor importancia</div>'+(esc3.length?'<ol class="rank">'+esc3.map((t,p)=>'<li style="grid-template-columns:32px 1fr"><span class="pos" style="font-size:16px">'+(p+1)+'</span><span class="txt" style="font-size:14px;line-height:20px">'+esc(t)+'</span></li>').join("")+'</ol>':'<span class="empty">Sin organizar</span>')+(st3.d.length?'<div class="lab" style="margin-top:12px">Prescindieron de</div><ul class="out-list">'+st3.d.map(i=>'<li>'+esc(ESCENARIOS[i])+'</li>').join("")+'</ul>':"")+'</div>'+
+    '</div><div>'+
+    '<div class="blk"><div class="lab"><b>04 · 05</b>Actividades y equipos involucrados hoy</div>'+(acts.length?'<table><thead><tr><th>Actividad</th><th>Equipos</th></tr></thead><tbody>'+acts.map(r=>'<tr><td>'+esc(r.a)+'</td><td>'+E(r.e)+'</td></tr>').join("")+'</tbody></table>':'<span class="empty">Sin responder</span>')+'</div>'+
+    '<div class="blk"><div class="lab"><b>06</b>Servicios</div>'+(svcs.length?'<div class="svc-list">'+svcs.map(s=>{const names=(s.acts||[]).map(i=>(c.actividades[i]||{}).a).filter(Boolean);return '<div class="svc-card"><b>'+esc(s.n)+'</b>'+(s.p&&s.p.trim()?'<div class="why">'+esc(s.p)+'</div>':"")+(names.length?'<div class="chips">'+names.map(n=>'<span class="chip">'+esc(n)+'</span>').join("")+'</div>':"")+'</div>';}).join("")+'</div>':'<span class="empty">Sin responder</span>')+'</div>'+
+    '</div></div>';
+}
+
+/* ---------- Casos (cargados desde CSV) ---------- */
+let loadErrors=[];
+try{const saved=JSON.parse(lsGet("vaf-casos")||"null"); if(Array.isArray(saved)) allCases=saved;}catch(e){}
+function persistCases(){lsSet("vaf-casos",JSON.stringify(allCases));}
+async function loadFiles(files){
+  loadErrors=[];
+  for(const f of files){
+    if(!/\.csv$/i.test(f.name)&&f.type!=="text/csv"){loadErrors.push(f.name+": no es un archivo CSV.");continue;}
+    try{const c=csvToCaso(await f.text()); c.id="f"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); c.archivo=f.name;
+      const key=x=>((x.proyecto||"")+"|"+grupoLabel(x)).toLowerCase(); const k=key(c); const prev=allCases.findIndex(x=>key(x)===k);
+      if(prev>=0){c.id=allCases[prev].id; allCases[prev]=c;} else allCases.push(c);
+    }catch(e){loadErrors.push(f.name+": "+(e.message||"no se pudo leer."));}
+  }
+  persistCases(); renderCases();
+}
+function renderCases(){
+  const box=$("#casesBox"), agg=$("#aggBox");
+  const list=allCases;
+  let h='<label class="drop" id="drop"><input type="file" id="csvIn" accept=".csv,text/csv" multiple class="sr"><span class="ms">upload_file</span><span><b>Cargar respuestas de los grupos</b><br><span class="help">Arrastren aquí los archivos CSV o hagan clic para elegirlos. Pueden cargar varios a la vez.</span></span></label>';
+  if(loadErrors.length) h+='<div class="banner-warn"><span class="ms">warning</span><span>'+loadErrors.map(esc).join("<br>")+'</span></div>';
+  if(list.length) h+='<div class="loaded"><span>'+list.length+' '+(list.length===1?"caso cargado":"casos cargados")+'</span><button class="btn tertiary" id="clearAll"><span class="ms">delete_sweep</span>Quitar todos</button></div>';
+  if(!list.length){box.innerHTML=h+'<div class="emptystate"><span class="ms">groups</span>Todavía no hay casos. Carguen los archivos CSV que descargaron los grupos al terminar la «Actividad en grupos».</div>';agg.innerHTML="";bindDrop();return;}
+  box.innerHTML=h+'<div class="cards">'+list.map(c=>{const p=progress(c);return '<button class="ccard" data-id="'+esc(c.id)+'"><span class="g">'+esc(grupoLabel(c))+'</span><h4>'+esc(c.proyecto||"Caso sin nombre")+'</h4><span class="meta"><span>'+p+' de 6 pasos</span><span class="ms">open_in_full</span></span><span class="prog" aria-hidden="true"><i style="width:'+(p/6*100)+'%"></i></span></button>';}).join("")+'</div>';
+  box.querySelectorAll(".ccard").forEach(b=>b.onclick=()=>openCase(b.dataset.id));
+  bindDrop();
+  // agregados
+  const first=ESCENARIOS.map(()=>0);
+  const outs=ESCENARIOS.map(()=>0);
+  list.forEach(c=>{const t=sortState(c); if(t.o.length) first[t.o[0]]++; t.d.forEach(i=>outs[i]++);});
+  const ranked=list.filter(c=>sortState(c).o.length).length;
+  const max=Math.max(1,...first);
+  const teams={}, svcs={};
+  const bump=(o,raw,g)=>{const k=raw.trim().toLowerCase().replace(/\s+/g," "); if(!k) return; o[k]=o[k]||{label:raw.trim(),n:0,g:new Set()}; o[k].n++; o[k].g.add(g);};
+  list.forEach(c=>{
+    (c.actividades||[]).forEach(r=>{(r.e||"").split(/[,;\n]|\sy\s/).forEach(t=>bump(teams,t,c.id));});
+    (c.servicios||[]).forEach(s=>bump(svcs,s.n||"",c.id));
+  });
+  const top=(o)=>Object.values(o).sort((a,b)=>b.g.size-a.g.size||b.n-a.n).slice(0,10);
+  agg.innerHTML='<div class="agg">'+
+   '<div><h4>Escenario más importante (n.º 1)</h4>'+(ranked?ESCENARIOS.map((e,i)=>({e,v:first[i]})).sort((a,b)=>b.v-a.v).map(x=>'<div class="bar"><span>'+esc(x.e)+'</span><span class="v">'+x.v+'</span><span class="tr"><i style="width:'+(x.v/max*100)+'%"></i></span></div>').join(""):'<p class="help">Aún ningún grupo ha organizado los escenarios.</p>')+(outs.some(v=>v)?'<div class="lab" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--secondarytext);margin:20px 0 6px">Prescindieron de</div><ul class="freq">'+ESCENARIOS.map((e,i)=>({e,v:outs[i]})).filter(x=>x.v).sort((a,b)=>b.v-a.v).map(x=>'<li><span>'+esc(x.e)+'</span><b>'+x.v+' '+(x.v===1?'grupo':'grupos')+'</b></li>').join('')+'</ul>':'')+'</div>'+
+   '<div><h4>Equipos más mencionados</h4>'+(Object.keys(teams).length?'<ul class="freq">'+top(teams).map(t=>'<li><span>'+esc(t.label)+'</span><b>'+t.g.size+' '+(t.g.size===1?"grupo":"grupos")+'</b></li>').join("")+'</ul>':'<p class="help">Aún no hay equipos.</p>')+'</div>'+
+   '<div><h4>Servicios propuestos</h4>'+(Object.keys(svcs).length?'<ul class="freq">'+top(svcs).map(t=>'<li><span>'+esc(t.label)+'</span><b>'+t.g.size+' '+(t.g.size===1?"grupo":"grupos")+'</b></li>').join("")+'</ul>':'<p class="help">Aún no hay servicios.</p>')+'</div>'+
+  '</div>';
+}
+function bindDrop(){
+  const d=$("#drop"), inp=$("#csvIn"); if(!d) return;
+  inp.onchange=()=>{loadFiles([...inp.files]);};
+  ["dragenter","dragover"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add("over");}));
+  ["dragleave","drop"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.remove("over");}));
+  d.addEventListener("drop",e=>{loadFiles([...(e.dataTransfer.files||[])]);});
+  const ca=$("#clearAll"); if(ca) ca.onclick=()=>{ if(ca.dataset.sure){allCases=[];loadErrors=[];persistCases();renderCases();} else {ca.dataset.sure="1";ca.innerHTML='<span class="ms">delete_sweep</span>¿Seguro? Quitar todos';} };
+}
+let openId=null;
+function openCase(id){
+  const c=allCases.find(x=>x.id===id); if(!c) return; openId=id;
+  $("#dlgGroup").textContent=grupoLabel(c);
+  $("#dlgTitle").textContent=c.proyecto||"Proyecto sin nombre";
+  $("#dlgBody").innerHTML=fichaHTML(Object.assign(blank(),c));
+  $("#dlgConfirm").classList.remove("on"); $("#dlgDel").hidden=false;
+  $("#ov").classList.add("on"); $("#dlgClose").focus();
+}
+function closeDlg(){$("#ov").classList.remove("on");openId=null;}
+$("#dlgClose").onclick=closeDlg;
+$("#ov").addEventListener("click",e=>{if(e.target.id==="ov")closeDlg();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&openId)closeDlg();});
+$("#dlgDel").onclick=()=>{$("#dlgConfirm").classList.add("on");$("#dlgDel").hidden=true;};
+$("#dlgDelNo").onclick=()=>{$("#dlgConfirm").classList.remove("on");$("#dlgDel").hidden=false;};
+$("#dlgDelYes").onclick=()=>{allCases=allCases.filter(x=>x.id!==openId);persistCases();closeDlg();renderCases();};
+
+renderWiz();
+scheduleSave();
+route();
+})();
+</script>
+</body>
+</html>
