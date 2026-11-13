@@ -624,11 +624,11 @@ const EXAMPLES={
  eqs:"<ul><li>Gestión de recursos y presupuesto → Finanzas y Planeación Financiera</li><li>Contratación de servicios externos → Abastecimiento Estratégico y Jurídica</li><li>Habilitación de espacios → Gerencia de Campus y Planta Física</li></ul>",
  svcs:"<ul><li>Gestión presupuestal y financiera</li><li>Gestión de talento humano</li><li>Desarrollo y formación</li><li>Gestión de compras, abastecimiento y proveedores</li><li>Gestión de espacios e infraestructura</li></ul>"
 };
-const SEC={caso:{ic:"edit_note",t:"Su caso"},c01:{n:"01",t:"Contexto"},c02:{n:"02",t:"Necesidades"},c03:{n:"03",t:"Escenarios de la cadena"},c04:{n:"04",t:"Actividades"},c05:{n:"05",t:"Equipos"},c06:{n:"06",t:"Servicios"}};
+const SEC={caso:{n:"01",t:"Su caso"},c01:{n:"02",t:"Contexto"},c02u:{n:"03",t:"Usuarios"},c02:{n:"04",t:"Necesidades"},c03:{n:"05",t:"Escenarios de la cadena"},c04:{n:"06",t:"Actividades"},c05:{n:"07",t:"Equipos"},c06:{n:"08",t:"Servicios"}};
 const SCREENS=[
  {id:"proyecto",sec:"caso",q:"Nombre de su caso",help:"Un proyecto real en el que hayan tenido que trabajar con otros equipos para sacarlo adelante. Debajo, escriban quiénes participan.",k:"proyecto",type:"line",req:true,ph:"Nombre del caso"},
  {id:"reto",sec:"c01",q:"¿Qué reto tenía el proyecto y qué se propuso lograr?",help:"Cuéntenlo en dos o tres frases.",k:"reto",type:"text",ex:"reto"},
- {id:"usuarios",sec:"c02",q:"¿Quiénes fueron los usuarios?",help:"Escriban el usuario principal del proyecto. Si hubo otros perfiles de usuario, agréguenlos debajo.",k:"usuarios",type:"users",ex:"usuarios"},
+ {id:"usuarios",sec:"c02u",q:"¿Quiénes fueron los usuarios?",help:"Escriban el usuario principal del proyecto. Si hubo otros perfiles de usuario, agréguenlos debajo.",k:"usuarios",type:"users",ex:"usuarios"},
  {id:"necesidades",sec:"c02",q:"¿Qué necesidades de esos usuarios resolvió el proyecto?",help:"Escriban una necesidad en cada campo. Pueden agregar o quitar campos.",type:"needs",ex:"necesidades"},
  {id:"esc",sec:"c03",q:"Organicen los escenarios de la cadena",help:"De mayor a menor importancia para su caso. Si alguno no aplica, prescindan de él.",type:"sort",ex:"esc"},
  {id:"acts",sec:"c04",q:"¿Qué tuvo que hacer la VAF para que el proyecto pudiera operar?",help:"Escriban una actividad por línea. Con Enter agregan la siguiente.",type:"acts",ex:"acts"},
