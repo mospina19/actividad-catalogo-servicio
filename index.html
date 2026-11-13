@@ -265,6 +265,18 @@ input[type=text]:focus,textarea:focus{outline:none;border-bottom:2px solid var(-
 .g-count{margin-left:auto;font-size:14px;line-height:20px;color:var(--secondarytext)}
 .g-bar{height:4px;background:var(--neutro-40);margin-top:var(--s12)}
 .g-bar i{display:block;height:100%;background:var(--brand-black);transition:width .3s}
+/* Tabs de preguntas (ID Uniandes · type icon) */
+.g-tabs{display:flex;width:100%;border-bottom:1px solid var(--neutro-40);background:var(--brand-white)}
+.g-tab{flex:1 1 0;min-width:0;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0 4px;background:var(--brand-white);border:0;border-bottom:2px solid transparent;color:var(--secondarytext);cursor:pointer;font:inherit}
+.g-tab .ms{font-size:24px}
+.g-tab .l{display:block;max-width:100%;font-size:13px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-tab[aria-selected="true"] .l{font-weight:700}
+.g-tab[aria-selected="true"]{color:var(--primarytext);border-bottom-color:var(--brand-black)}
+.g-tab[aria-selected="true"] .ms{font-variation-settings:"wght" 600}
+.g-tab:hover:not(:disabled){background:var(--brand-black);color:var(--brand-white)}
+.g-tab:disabled{background:var(--neutro-40);color:var(--disabledtext);cursor:not-allowed}
+.g-tab:focus-visible{outline:1px solid var(--brand-black);outline-offset:-1px}
+@media(max-width:767px){.g-tab{height:64px;padding:0}.g-tab .ms{font-size:22px}.g-tab .l{display:none}}
 .g-body{padding:var(--s40) var(--s32) var(--s24)}
 .g-crumb{display:flex;align-items:center;gap:8px;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--secondarytext);margin-bottom:var(--s12)}
 .g-crumb .ms{font-size:16px}
@@ -439,7 +451,7 @@ footer b{color:var(--dk-primarytext)}
             <p class="q">¿Cuáles fueron los usuarios? ¿Cuáles eran las necesidades del usuario que se resolvieron a través de este proyecto?</p>
             <div class="ans">
               <div class="iconrow"><span class="ms" aria-hidden="true">groups</span><p><b>Usuarios:</b> profesores y estudiantes de investigación.</p></div>
-              <div class="iconrow"><span class="ms" aria-hidden="true">target</span><p><b>Necesidad:</b> realizar la toma de muestras para hacer vigilancia epidemiológica.</p></div>
+              <div class="iconrow"><span class="ms" aria-hidden="true">target</span><p><b>Necesidad:</b> realizar la toma de muestras para hacer vigilancia epidemiológica. Adicional, servir a la crisis social del contexto de Covid-19.</p></div>
             </div>
           </article>
           <article class="step" data-n="3">
@@ -518,10 +530,11 @@ footer b{color:var(--dk-primarytext)}
 <section class="view" id="v-tarea" aria-labelledby="t-ta">
   <div class="band alt">
     <div class="wrap">
-      <div style="max-width:760px;margin:0 auto var(--s24)"><div class="eyebrow" style="color:var(--secondarytext)">Momento 2 · Actividad en grupos</div><h2 class="sec-title" id="t-ta" style="margin-top:8px">Su caso</h2><p class="sec-intro" style="font-size:18px;line-height:28px">Elijan un proyecto real en el que hayan tenido que trabajar con otros equipos para sacarlo adelante, y recórranlo con los mismos pasos del caso CoVIDA. Al final descargarán sus respuestas en un archivo CSV.</p></div>
+      <div style="max-width:760px;margin:0 auto var(--s24)"><div class="eyebrow" style="color:var(--secondarytext)">Momento 2 · Actividad en grupos</div><h2 class="sec-title" id="t-ta" style="margin-top:8px">Su caso</h2><p class="sec-intro" style="font-size:18px;line-height:28px">Elijan un proyecto real en el que hayan tenido que trabajar con otros equipos para sacarlo adelante, y recórranlo con los mismos pasos del caso CoVIDA. Al final descargarán sus respuestas en un archivo de Excel.</p></div>
       <div class="guide" id="wiz">
+        <div class="g-tabs" id="gTabs" role="tablist" aria-label="Preguntas de la actividad"></div>
         <div class="g-top" id="gTop"></div>
-        <div class="g-body" id="wizBody"></div>
+        <div class="g-body" id="wizBody" role="tabpanel"></div>
         <div class="g-foot" id="gFoot"></div>
       </div>
       <div class="g-meta"><span class="status" id="status" aria-live="polite"></span></div>
@@ -535,7 +548,7 @@ footer b{color:var(--dk-primarytext)}
     <div class="wrap">
       <div class="eyebrow" style="color:var(--secondarytext)">Momento 3 · Puesta en común</div>
       <h2 class="sec-title" id="t-ca" style="margin-top:8px">Casos de los grupos</h2>
-      <p class="sec-intro">Carguen los archivos CSV que descargó cada grupo. Abran una ficha para presentarla.</p>
+      <p class="sec-intro">Carguen los archivos de Excel que descargó cada grupo. Abran una ficha para presentarla.</p>
       <div id="casesBox"></div>
       <div id="aggBox"></div>
     </div>
@@ -605,7 +618,7 @@ const EXAMPLES={
  proyecto:"<p>En el ejemplo, el caso se llama <b>CoVIDA</b>.</p>",
  reto:"<p>Ante la pandemia, la Universidad creó CoVIDA para detectar tempranamente contagios de COVID-19 y generar información que apoyara la toma de decisiones en salud pública.</p>",
  usuarios:"<p>Profesores y estudiantes de investigación.</p>",
- necesidades:"<p>Realizar la toma de muestras para hacer vigilancia epidemiológica.</p>",
+ necesidades:"<p>Realizar la toma de muestras para hacer vigilancia epidemiológica. Adicional, servir a la crisis social del contexto de Covid-19.</p>",
  esc:"<p>El escenario más conectado fue <b>Conocimiento, creación, publicaciones, propiedad intelectual y conocimiento abierto</b>.</p>",
  acts:"<ul><li>Gestión de recursos y presupuesto</li><li>Vinculación y administración de personal</li><li>Capacitación de equipos</li><li>Contratación y compras de servicios externos</li><li>Separación de espacios para toma de muestras</li><li>Almacenamiento de muestras</li></ul>",
  eqs:"<ul><li>Gestión de recursos y presupuesto → Finanzas y Planeación Financiera</li><li>Contratación de servicios externos → Abastecimiento Estratégico y Jurídica</li><li>Habilitación de espacios → Gerencia de Campus y Planta Física</li></ul>",
@@ -624,6 +637,23 @@ const SCREENS=[
  {id:"fin"}
 ];
 const NQ=SCREENS.length-1; // preguntas sin contar la ficha final
+const TABS=["Su caso","Contexto","Usuarios","Necesidades","Escenarios","Actividades","Equipos","Servicios","Ficha"];
+function tabDone(i){const c=caso;switch(i){
+  case 0:return !!(c.proyecto||"").trim();
+  case 1:return !!(c.reto||"").trim();
+  case 2:return !!((c.usuarios||"").trim()||(c.otrosUsuarios||[]).some(x=>(x||"").trim()));
+  case 3:return necList(c).some(x=>(x||"").trim());
+  case 4:return filled(3,c); case 5:return filled(4,c); case 6:return filled(5,c); case 7:return filled(6,c);
+ } return false;}
+const TAB_SHORT=["Caso","Contexto","Usuarios","Necesidad","Escenarios","Actividad","Equipos","Servicios","Ficha"];
+const TAB_ICONS=["edit_note","info","groups","target","format_list_numbered","checklist","diversity_3","category","description"];
+function renderTabs(){
+  const locked=!canGo(SCREENS[0]);
+  $("#gTabs").innerHTML=TABS.map((t,i)=>{const sel=i===wStep, dis=locked&&i>0, done=i<NQ&&tabDone(i);
+    const name=(i<NQ?(i+1)+". ":"")+t+(done?" (respondida)":"");
+    return '<button type="button" role="tab" class="g-tab" id="gTab'+i+'" data-tab="'+i+'" aria-label="'+esc(name)+'" title="'+esc(dis?t+" · primero escriban el nombre del caso":t)+'" aria-selected="'+sel+'" aria-controls="wizBody" tabindex="'+(sel?0:-1)+'"'+(dis?" disabled":"")+'><span class="ms" aria-hidden="true">'+TAB_ICONS[i]+'</span><span class="l" aria-hidden="true">'+TAB_SHORT[i]+'</span></button>';}).join("");
+  $("#wizBody").setAttribute("aria-labelledby","gTab"+wStep);
+}
 function filled(i,c){c=c||caso;
   const acts=(c.actividades||[]).filter(x=>x.a&&x.a.trim());
   switch(i){
@@ -641,17 +671,18 @@ function hasDraft(){return !!((caso.grupo||"").trim()||(caso.proyecto||"").trim(
 
 function renderWiz(focusSel){
   const sc=SCREENS[wStep], B=$("#wizBody"), T=$("#gTop"), F=$("#gFoot");
+  renderTabs();
   // barra superior
   {
     const qn=Math.min(wStep+1,NQ);
-    T.innerHTML='<div class="row1">'+(wStep>0?'<button class="g-back" id="gBack"><span class="ms" aria-hidden="true">arrow_back</span><span class="t">Atrás</span></button>':'')+'<span class="g-count">'+(sc.id==="fin"?"Ficha completa":"Pregunta "+qn+" de "+NQ)+'</span></div><div class="g-bar" aria-hidden="true"><i style="width:'+(sc.id==="fin"?100:Math.round((qn-1)/NQ*100))+'%"></i></div>';
+    T.innerHTML='<div class="row1">'+(wStep>0?'<button class="g-back" id="gBack"><span class="ms" aria-hidden="true">arrow_back</span><span class="t">Atrás</span></button>':'')+'<span class="g-count">'+(sc.id==="fin"?"Ficha completa":"Pregunta "+qn+" de "+NQ)+'</span></div>';
   }
   let h="";
   const crumb=s=>{const m=SEC[s];return '<div class="g-crumb">'+(m.n?'<span class="num">'+m.n+'</span>':'<span class="ms">'+m.ic+'</span>')+esc(m.t)+'</div>';};
   const ex=k=>'<details class="g-ex"><summary><span class="ms">lightbulb</span>Ver cómo lo respondimos en CoVIDA<span class="ms chev" style="margin-left:auto">expand_more</span></summary><div class="exb">'+EXAMPLES[k]+'</div></details>';
   if(sc.id==="fin"){
     h='<div class="g-done"><span class="ms">task_alt</span>Su caso quedó listo. Descarguen sus respuestas y entreguen el archivo a quien facilita.</div><h2 class="g-q" style="margin-bottom:var(--s24)">'+esc(caso.proyecto||"Su caso")+'</h2>'+fichaHTML(caso);
-    F.innerHTML='<div class="g-actions"><button class="btn primary" id="dlCsv"><span class="ms">'+(canDL()?'download':'content_copy')+'</span>'+(canDL()?'Descargar respuestas CSV':'Copiar respuestas CSV')+'</button>'+(canDL()?'<button class="btn secondary" id="copyCsv"><span class="ms">content_copy</span>Copiar CSV</button>':'')+'<button class="btn tertiary g-new" id="newCase"><span class="ms">add</span>Empezar otro caso</button></div>';
+    F.innerHTML='<div class="g-actions"><button class="btn primary" id="dlCsv"><span class="ms">'+(canDL()?'download':'content_copy')+'</span>'+(canDL()?'Descargar respuestas en Excel':'Copiar respuestas')+'</button>'+'<button class="btn tertiary g-new" id="newCase"><span class="ms">add</span>Empezar otro caso</button></div>';
   } else {
     h=crumb(sc.sec)+'<h2 class="g-q" id="gQ">'+esc(sc.q)+'</h2><p class="g-help">'+esc(sc.help)+'</p><div class="g-field">';
     if(sc.type==="line") h+='<input type="text" id="gIn" data-k="'+sc.k+'" maxlength="120" aria-labelledby="gQ" placeholder="'+esc(sc.ph)+'" value="'+esc(caso[sc.k]||"")+'">';
@@ -694,7 +725,15 @@ function sortHTML(){
     '<div class="zone out" data-drop="d"><div class="zh"><span class="ms">block</span>Prescindimos<span class="ct">'+t.d.length+'</span></div>'+(t.d.length?t.d.map(i=>card(i,"d")).join(""):'<div class="zempty">Los escenarios que no apliquen al caso quedarán aquí.</div>')+'</div>'+
     '</div>'+((t.o.length||t.d.length)?'':'<p class="help" style="margin-top:12px">Si el orden inicial ya les sirve, pueden continuar.</p>');
 }
-function go(n){wStep=Math.max(0,Math.min(SCREENS.length-1,n));renderWiz();const g=$("#wiz");if(g.getBoundingClientRect().top<70)g.scrollIntoView({block:"start"});}
+function go(n,keepTab){wStep=Math.max(0,Math.min(SCREENS.length-1,n));renderWiz();if(keepTab){const t=$("#gTab"+wStep);if(t)t.focus({preventScroll:true});}const g=$("#wiz");if(g.getBoundingClientRect().top<70)g.scrollIntoView({block:"start"});}
+$("#gTabs").addEventListener("click",e=>{const b=e.target.closest(".g-tab"); if(!b||b.disabled) return; const n=+b.dataset.tab; if(n!==wStep) go(n);});
+$("#gTabs").addEventListener("keydown",e=>{
+  const k=e.key; if(!["ArrowLeft","ArrowRight","Home","End"].includes(k)) return; e.preventDefault();
+  const en=[...document.querySelectorAll("#gTabs .g-tab:not(:disabled)")].map(b=>+b.dataset.tab); if(!en.length) return;
+  let p=en.indexOf(wStep); if(p<0) p=0;
+  const n=k==="Home"?en[0]:k==="End"?en[en.length-1]:en[(p+(k==="ArrowRight"?1:-1)+en.length)%en.length];
+  go(n,true);
+});
 $("#wiz").addEventListener("click",e=>{
   const b=e.target.closest("button"); if(!b) return;
   if(b.id==="gNext"){ if(SCREENS[wStep].type==="sort"){const t=sortState(caso); if(!t.o.length&&!t.d.length){caso.orden=sortList(caso);changed(false);}} go(wStep+1);return;}
@@ -782,7 +821,7 @@ $("#wizBody").addEventListener("pointercancel",()=>endDrag(false));
 
 function changed(rerender,focusSel){
   lsSet("vaf-draft",JSON.stringify({id:casoId,caso}));
-  if(rerender) renderWiz(focusSel);
+  if(rerender) renderWiz(focusSel); else renderTabs();
   scheduleSave();
 }
 
@@ -795,7 +834,7 @@ function setStatus(kind,msg){
 }
 function scheduleSave(){
   if(!caso.proyecto.trim()&&!caso.grupo.trim()){setStatus("","");return;}
-  setStatus("idle","Borrador guardado en este navegador. Al final podrán descargarlo en CSV.");
+  setStatus("idle","Borrador guardado en este navegador. Al final podrán descargarlo en Excel.");
 }
 
 /* ---------- CSV ---------- */
@@ -822,8 +861,9 @@ function parseCSV(text){
   if(cur!==""||row.length){row.push(cur);rows.push(row);}
   return rows.filter(r=>r.some(x=>x.trim()!==""));
 }
-function csvToCaso(text){
-  const rows=parseCSV(text); if(!rows.length) throw new Error("El archivo está vacío.");
+function csvToCaso(text){return rowsToCaso(parseCSV(text));}
+function rowsToCaso(rows){
+  if(!rows.length) throw new Error("El archivo está vacío.");
   const h=rows[0].map(x=>x.trim().toLowerCase()); const ic=h.indexOf("campo"), inn=h.indexOf("n"), iv=h.indexOf("valor");
   if(ic<0||iv<0) throw new Error("No es un archivo de respuestas de esta actividad.");
   const c=blank(); c.participantes=[]; c.otrosUsuarios=[]; c.necesidades=[]; c.actividades=[]; c.servicios=[]; const orden=[], desc=[], acts={}, eqs={}, svc={};
@@ -848,15 +888,122 @@ let downloadsNS=null; const inClaude=!!(window.claude&&window.claude.use);
 function canDL(){return !!downloadsNS||!inClaude;}
 (async()=>{try{if(window.claude&&window.claude.use){downloadsNS=await window.claude.use("downloads"); if(SCREENS[wStep].id==="fin") renderWiz();}}catch(e){}})();
 async function downloadCSV(){
-  const csv=casoToCSV(caso), name="cadena-de-valor_"+fileSlug(caso.proyecto||caso.grupo)+".csv";
-  if(downloadsNS){ try{ await downloadsNS.save({filename:name,data:csv}); setStatus("ok","Descargaron "+name+". Entréguenlo a quien facilita la actividad."); }catch(e){ setStatus("err","No se descargó el archivo. Intenten de nuevo o usen «Copiar CSV»."); } }
-  else if(!inClaude){ try{ const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); const a=document.createElement("a"); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); setStatus("ok","Descargaron "+name+". Entréguenlo a quien facilita la actividad."); }catch(e){ copyCSV(); } }
+  const csv=casoToXLSX(caso), name="cadena-de-valor_"+fileSlug(caso.proyecto||caso.grupo)+".xlsx";
+  if(downloadsNS){ try{ await downloadsNS.save({filename:name,data:csv}); setStatus("ok","Descargaron "+name+". Entréguenlo a quien facilita la actividad."); }catch(e){ setStatus("err",e&&e.code==="declined"?"No se guardó el archivo. Pueden intentarlo de nuevo.":"No se descargó el archivo. Intenten de nuevo."); } }
+  else if(!inClaude){ try{ const url=URL.createObjectURL(new Blob([csv],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})); const a=document.createElement("a"); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); setStatus("ok","Descargaron "+name+". Entréguenlo a quien facilita la actividad."); }catch(e){ copyCSV(); } }
   else copyCSV();
 }
 async function copyCSV(){
   try{ await navigator.clipboard.writeText(casoToCSV(caso).replace(/^﻿/,"")); setStatus("ok","CSV copiado. Péguenlo en un archivo de texto y guárdenlo con extensión .csv."); }
   catch(e){ setStatus("err","No se pudo copiar el CSV en este navegador."); }
 }
+
+/* ---------- Excel (.xlsx) ---------- */
+const CRC_T=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC_T[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function zipStore(files){
+  const enc=new TextEncoder(), parts=[], cent=[]; let off=0;
+  files.forEach(f=>{const nm=enc.encode(f.name), d=enc.encode(f.data), crc=crc32(d);
+    const h=new DataView(new ArrayBuffer(30)); h.setUint32(0,0x04034b50,true); h.setUint16(4,20,true); h.setUint16(6,0x0800,true); h.setUint16(12,0x21,true); h.setUint32(14,crc,true); h.setUint32(18,d.length,true); h.setUint32(22,d.length,true); h.setUint16(26,nm.length,true);
+    parts.push(new Uint8Array(h.buffer),nm,d);
+    const c=new DataView(new ArrayBuffer(46)); c.setUint32(0,0x02014b50,true); c.setUint16(4,20,true); c.setUint16(6,20,true); c.setUint16(8,0x0800,true); c.setUint16(14,0x21,true); c.setUint32(16,crc,true); c.setUint32(20,d.length,true); c.setUint32(24,d.length,true); c.setUint16(28,nm.length,true); c.setUint32(42,off,true);
+    cent.push(new Uint8Array(c.buffer),nm); off+=30+nm.length+d.length;});
+  const csize=cent.reduce((s,a)=>s+a.length,0), e=new DataView(new ArrayBuffer(22)); e.setUint32(0,0x06054b50,true); e.setUint16(8,files.length,true); e.setUint16(10,files.length,true); e.setUint32(12,csize,true); e.setUint32(16,off,true);
+  const all=parts.concat(cent,[new Uint8Array(e.buffer)]), out=new Uint8Array(all.reduce((s,a)=>s+a.length,0)); let p=0; all.forEach(a=>{out.set(a,p);p+=a.length;}); return out;}
+const xe=s=>String(s==null?"":s).replace(/\r\n?/g,"\n").replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function sheetXML(rows,widths,freeze){
+  const body=rows.map((r,ri)=>{const cells=(r.c||[]).map((v,ci)=>{const st=Array.isArray(r.s)?r.s[ci]:(r.s||0); if((v==null||v==="")&&!st) return ""; return '<c r="'+String.fromCharCode(65+ci)+(ri+1)+'"'+(st?' s="'+st+'"':'')+(v==null||v===""?'/>':' t="inlineStr"><is><t xml:space="preserve">'+xe(v)+'</t></is></c>');}).join("");
+    return '<row r="'+(ri+1)+'">'+cells+'</row>';}).join("");
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+    (freeze?'<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>':'')+
+    '<cols>'+widths.map((w,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join("")+'</cols><sheetData>'+body+'</sheetData></worksheet>';
+}
+function fichaRows(c){
+  const R=[], blank=()=>R.push({c:[]}), sec=t=>R.push({c:[t,""],s:4}), kv=(k,v)=>R.push({c:[k,v],s:[1,2]}), ne=a=>(a||[]).filter(x=>(x||"").trim());
+  R.push({c:[c.proyecto||"Caso sin nombre"],s:3});
+  if((c.grupo||"").trim()) kv("Grupo",c.grupo);
+  if(ne(c.participantes).length) kv("Participantes",ne(c.participantes).join(" · "));
+  blank(); sec("01 Contexto"); kv("Reto y propósito",c.reto||"");
+  blank(); sec("02 Usuarios y necesidades"); kv("Usuario principal",c.usuarios||"");
+  ne(c.otrosUsuarios).forEach((u,i)=>kv("Otro perfil de usuario "+(i+1),u));
+  ne(necList(c)).forEach((n,i)=>kv("Necesidad "+(i+1),n));
+  blank(); sec("03 Escenarios de la cadena"); const t=sortState(c);
+  t.o.forEach((i,k)=>kv("Importancia "+(k+1),ESCENARIOS[i])); t.d.forEach(i=>kv("Prescindieron de",ESCENARIOS[i]));
+  const acts=(c.actividades||[]).map((r,i)=>({...r,i})).filter(r=>(r.a||"").trim());
+  blank(); sec("04 · 05 Actividades y equipos"); R.push({c:["Actividad","Equipos involucrados hoy"],s:1});
+  acts.forEach(r=>R.push({c:[r.a.trim(),r.e||""],s:2}));
+  blank(); sec("06 Servicios");
+  (c.servicios||[]).filter(s=>(s.n||"").trim()).forEach((s,k)=>{ if(k) blank(); kv("Servicio "+(k+1),s.n.trim()); if((s.p||"").trim()) kv("Por qué ese nombre",s.p);
+    const names=(s.acts||[]).map(i=>(c.actividades[i]||{}).a).filter(x=>(x||"").trim()); if(names.length) kv("Actividades que agrupa",names.map(x=>x.trim()).join("\n")); });
+  return R;
+}
+function casoToXLSX(c){
+  const datos=[{c:CSV_HEAD,s:1}].concat(casoToRows(c).map(r=>({c:r.map(String),s:2})));
+  const styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+    '<fonts count="4"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="16"/><name val="Calibri"/></font><font><b/><sz val="12"/><name val="Calibri"/></font></fonts>'+
+    '<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFE41E"/><bgColor indexed="64"/></patternFill></fill></fills>'+
+    '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'+
+    '<cellXfs count="5"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'+
+    '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf>'+
+    '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf>'+
+    '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>'+
+    '<xf numFmtId="0" fontId="3" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs>'+
+    '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  return zipStore([
+    {name:"[Content_Types].xml",data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
+    {name:"_rels/.rels",data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+    {name:"xl/workbook.xml",data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Ficha" sheetId="1" r:id="rId1"/><sheet name="Datos" sheetId="2" r:id="rId2"/></sheets></workbook>'},
+    {name:"xl/_rels/workbook.xml.rels",data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
+    {name:"xl/styles.xml",data:styles},
+    {name:"xl/worksheets/sheet1.xml",data:sheetXML(fichaRows(c),[34,90])},
+    {name:"xl/worksheets/sheet2.xml",data:sheetXML(datos,[18,24,6,90],true)}
+  ]);
+}
+const xu=s=>s.replace(/&#x([0-9a-f]+);/gi,(_,h)=>String.fromCodePoint(parseInt(h,16))).replace(/&#(\d+);/g,(_,d)=>String.fromCodePoint(+d)).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&amp;/g,"&");
+const xattr=(tag,n)=>{const m=tag.match(new RegExp("\\s"+n+'="([^"]*)"'));return m?xu(m[1]):null;};
+async function unzip(buf){
+  const u=new Uint8Array(buf), dv=new DataView(u.buffer,u.byteOffset,u.byteLength), dec=new TextDecoder();
+  let e=u.length-22; while(e>=0&&dv.getUint32(e,true)!==0x06054b50) e--;
+  if(e<0) throw new Error("No es un archivo de Excel válido.");
+  const n=dv.getUint16(e+10,true), files={}; let p=dv.getUint32(e+16,true);
+  for(let k=0;k<n;k++){
+    if(dv.getUint32(p,true)!==0x02014b50) throw new Error("No es un archivo de Excel válido.");
+    const method=dv.getUint16(p+10,true), csz=dv.getUint32(p+20,true), nl=dv.getUint16(p+28,true), xl=dv.getUint16(p+30,true), cl=dv.getUint16(p+32,true), lo=dv.getUint32(p+42,true);
+    const name=dec.decode(u.subarray(p+46,p+46+nl)); p+=46+nl+xl+cl;
+    const ds=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true); files[name]={method,data:u.subarray(ds,ds+csz)};
+  }
+  return async name=>{const f=files[name]; if(!f) return null; let d=f.data;
+    if(f.method===8){ if(typeof DecompressionStream==="undefined") throw new Error("este navegador no puede abrir archivos de Excel; usen una versión reciente de Chrome, Edge, Firefox o Safari.");
+      d=new Uint8Array(await new Response(new Blob([d]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer()); }
+    else if(f.method!==0) throw new Error("el archivo usa una compresión no compatible.");
+    return dec.decode(d);};
+}
+async function xlsxToRows(buf){
+  const get=await unzip(buf), wb=await get("xl/workbook.xml"); if(!wb) throw new Error("No es un archivo de Excel válido.");
+  const sh=(wb.match(/<sheet\b[^>]*>/g)||[]).find(t=>(xattr(t,"name")||"").trim().toLowerCase()==="datos");
+  if(!sh) throw new Error("No tiene la hoja «Datos» de esta actividad.");
+  const rid=xattr(sh,"r:id"), rels=await get("xl/_rels/workbook.xml.rels")||"";
+  const rel=(rels.match(/<Relationship\b[^>]*>/g)||[]).find(t=>xattr(t,"Id")===rid); let tg=rel&&xattr(rel,"Target");
+  if(!tg) throw new Error("No se encontró la hoja «Datos».");
+  tg=tg.startsWith("/")?tg.slice(1):"xl/"+tg;
+  const ss=await get("xl/sharedStrings.xml");
+  const tx=s=>(s.match(/<t\b[^>]*>[\s\S]*?<\/t>|<t\b[^>]*\/>/g)||[]).map(t=>{const m=t.match(/<t\b[^>]*>([\s\S]*?)<\/t>/);return m?xu(m[1]):"";}).join("");
+  const shared=ss?(ss.match(/<si\b[^>]*>[\s\S]*?<\/si>/g)||[]).map(si=>tx(si.replace(/<rPh\b[\s\S]*?<\/rPh>/g,""))):[];
+  const xml=await get(tg); if(!xml) throw new Error("No se encontró la hoja «Datos».");
+  const data=(xml.match(/<sheetData\b[^>]*>([\s\S]*?)<\/sheetData>/)||["",""])[1];
+  const rows=[];
+  (data.match(/<row\b[^>]*>[\s\S]*?<\/row>|<row\b[^>]*\/>/g)||[]).forEach(rx=>{
+    const row=[]; const re=/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g; let m, ci=0;
+    while((m=re.exec(rx))){const at=" "+m[1], ref=xattr(at,"r"), ty=xattr(at,"t")||"", inner=m[2]||"";
+      if(ref){const L=ref.match(/^[A-Z]+/)[0]; ci=0; for(const ch of L) ci=ci*26+(ch.charCodeAt(0)-64); ci--;}
+      let v=""; const vm=inner.match(/<v>([\s\S]*?)<\/v>/);
+      if(ty==="s") v=vm?(shared[+vm[1]]||""):""; else if(ty==="inlineStr") v=tx(inner); else v=vm?xu(vm[1]):"";
+      row[ci]=v; ci++;}
+    for(let i=0;i<row.length;i++) if(row[i]==null) row[i]="";
+    rows.push(row);});
+  return rows.filter(r=>r.some(x=>String(x).trim()!==""));
+}
+async function xlsxToCaso(buf){return rowsToCaso(await xlsxToRows(buf));}
 
 /* ---------- Ficha ---------- */
 function fichaHTML(c){
@@ -882,8 +1029,9 @@ function persistCases(){lsSet("vaf-casos",JSON.stringify(allCases));}
 async function loadFiles(files){
   loadErrors=[];
   for(const f of files){
-    if(!/\.csv$/i.test(f.name)&&f.type!=="text/csv"){loadErrors.push(f.name+": no es un archivo CSV.");continue;}
-    try{const c=csvToCaso(await f.text()); c.id="f"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); c.archivo=f.name;
+    const isX=/\.xlsx$/i.test(f.name), isC=/\.csv$/i.test(f.name)||f.type==="text/csv";
+    if(!isX&&!isC){loadErrors.push(f.name+": no es un archivo de Excel (.xlsx).");continue;}
+    try{const c=isX?await xlsxToCaso(await f.arrayBuffer()):csvToCaso(await f.text()); c.id="f"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); c.archivo=f.name;
       const key=x=>((x.proyecto||"")+"|"+grupoLabel(x)).toLowerCase(); const k=key(c); const prev=allCases.findIndex(x=>key(x)===k);
       if(prev>=0){c.id=allCases[prev].id; allCases[prev]=c;} else allCases.push(c);
     }catch(e){loadErrors.push(f.name+": "+(e.message||"no se pudo leer."));}
@@ -893,10 +1041,10 @@ async function loadFiles(files){
 function renderCases(){
   const box=$("#casesBox"), agg=$("#aggBox");
   const list=allCases;
-  let h='<label class="drop" id="drop"><input type="file" id="csvIn" accept=".csv,text/csv" multiple class="sr"><span class="ms">upload_file</span><span><b>Cargar respuestas de los grupos</b><br><span class="help">Arrastren aquí los archivos CSV o hagan clic para elegirlos. Pueden cargar varios a la vez.</span></span></label>';
+  let h='<label class="drop" id="drop"><input type="file" id="csvIn" accept=".xlsx,.csv" multiple class="sr"><span class="ms">upload_file</span><span><b>Cargar respuestas de los grupos</b><br><span class="help">Arrastren aquí los archivos de Excel (.xlsx) o hagan clic para elegirlos. Pueden cargar varios a la vez.</span></span></label>';
   if(loadErrors.length) h+='<div class="banner-warn"><span class="ms">warning</span><span>'+loadErrors.map(esc).join("<br>")+'</span></div>';
   if(list.length) h+='<div class="loaded"><span>'+list.length+' '+(list.length===1?"caso cargado":"casos cargados")+'</span><button class="btn tertiary" id="clearAll"><span class="ms">delete_sweep</span>Quitar todos</button></div>';
-  if(!list.length){box.innerHTML=h+'<div class="emptystate"><span class="ms">groups</span>Todavía no hay casos. Carguen los archivos CSV que descargaron los grupos al terminar la «Actividad en grupos».</div>';agg.innerHTML="";bindDrop();return;}
+  if(!list.length){box.innerHTML=h+'<div class="emptystate"><span class="ms">groups</span>Todavía no hay casos. Carguen los archivos de Excel que descargaron los grupos al terminar la «Actividad en grupos».</div>';agg.innerHTML="";bindDrop();return;}
   box.innerHTML=h+'<div class="cards">'+list.map(c=>{const p=progress(c);return '<button class="ccard" data-id="'+esc(c.id)+'"><span class="g">'+esc(grupoLabel(c))+'</span><h4>'+esc(c.proyecto||"Caso sin nombre")+'</h4><span class="meta"><span>'+p+' de 6 pasos</span><span class="ms">open_in_full</span></span><span class="prog" aria-hidden="true"><i style="width:'+(p/6*100)+'%"></i></span></button>';}).join("")+'</div>';
   box.querySelectorAll(".ccard").forEach(b=>b.onclick=()=>openCase(b.dataset.id));
   bindDrop();
